@@ -2,23 +2,38 @@
 const express=require('express');
 const mongoose=require('mongoose');
 const dotenv=require('dotenv');
+const loginroutes=require("./Routes/LoginRoutes");
+// const {LoginController} =require("./Controller/LoginController");
 dotenv.config();
+const cookieParser = require("cookie-parser");
 
 const app=express();
-console.log(process.env.MongoDB_URL);
+
+
+app.use(express.json());//if json body is coming
+app.use(express.urlencoded({extended:true})) //if formdata is coming
+app.use(cookieParser());
+
 mongoose.connect(process.env.MongoDB_URL)
     .then(() => {
         console.log("MongoDB connected...");
-        // Start the Express server
-        app.listen(process.env.APP_PORT, () => {
-            console.log(`App running on port ${process.env.APP_PORT}`);
-        });
+        
     })
     .catch(error => {
         console.error("Error connecting to MongoDB:", error);
     });
 
 
-// module.exports=app.listen(process.env.APP_PORT,()=>{
-//     console.log(`App running on port ${process.env.APP_PORT}`);
-// })
+app.listen(process.env.APP_PORT,()=>{
+    console.log(`App running on port ${process.env.APP_PORT}`);
+})
+
+app.get("/", (req, res) => {
+    res.send("Hello, world!");
+});
+
+app.use('/api',loginroutes);
+
+// module.exports = async (app) => {
+//     LoginController(app);
+// }
