@@ -28,6 +28,17 @@ class LoginService{
           
         }
     }
+
+    async RefreshToken(req,res,next){
+
+        try{
+           const LoginUser=await this.repository.RefreshToken(req,res,next);
+           return LoginUser;
+        }
+        catch(error){
+          
+        }
+    }
 }
 
 module.exports = LoginService;

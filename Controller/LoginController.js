@@ -28,6 +28,17 @@ const login=async(req,res,next)=>{
     }
 };
 
-module.exports = {register,login};
+const RefreshToken=async(req,res,next)=>{
+    try{
+        const token=await service.RefreshToken(req,res,next);
+
+        res.status(200).json({token});
+    }
+    catch(error){
+       next(error);
+    }
+};
+
+module.exports = {register,login,RefreshToken};
 
 // }

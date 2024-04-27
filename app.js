@@ -3,6 +3,7 @@ const express=require('express');
 const mongoose=require('mongoose');
 const dotenv=require('dotenv');
 const loginroutes=require("./Routes/LoginRoutes");
+const {AuthAccessToken}=require("./Middlerware/Auth");
 // const {LoginController} =require("./Controller/LoginController");
 dotenv.config();
 const cookieParser = require("cookie-parser");
@@ -28,7 +29,7 @@ app.listen(process.env.APP_PORT,()=>{
     console.log(`App running on port ${process.env.APP_PORT}`);
 })
 
-app.get("/", (req, res) => {
+app.get("/",AuthAccessToken, (req, res) => {
     res.send("Hello, world!");
 });
 
