@@ -14,7 +14,7 @@ class LoginService{
            return RegisterUser;
         }
         catch(error){
-          
+            next(error);
         }
     }
 
@@ -25,7 +25,7 @@ class LoginService{
            return LoginUser;
         }
         catch(error){
-          
+            next(error);
         }
     }
 
@@ -36,8 +36,18 @@ class LoginService{
            return LoginUser;
         }
         catch(error){
-          
+          next(error);
         }
+    }
+
+    async ForgotPassword(req,res,next){
+        try{
+            const LoginUser=await this.repository.ForgotPassword(req,res,next);
+            return LoginUser;
+         }
+         catch(error){
+           next(error);
+         }
     }
 }
 

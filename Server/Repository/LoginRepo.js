@@ -136,6 +136,34 @@ class LoginRepository {
 
     }
 
+    async ForgotPassword(req,res,next){
+        try{
+            const UserInputs = await AuthLoginSchema.validateAsync(req.body);
+            const userdata= await User.findOne({email:UserInputs.email});
+
+            if(!userdata){
+                res.status(404).json({message:"User Not Found!"});
+            }
+
+            const EnteredPassword = await bcrypt.compare(UserInputs.password,userdata.password);
+            console.log(EnteredPassword);
+            if(EnteredPassword){
+                res.status(201).json({message:"Password is same as previous!"});
+            }
+
+            const hashPassword = await bcrypt.hash(UserInputs.password, 10);
+
+            const user = await User.updateOne({email:UserInputs.email},{password:hashPassword});
+
+
+            res.status(201).json({message:"Password Updated!"});
+
+        }
+        catch(error){
+            next(error);
+        }
+    }
+
 
 }
 
