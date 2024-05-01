@@ -2,7 +2,8 @@
 const express=require('express');
 const mongoose=require('mongoose');
 const dotenv=require('dotenv');
-const loginroutes=require("./Routes/LoginRoutes");
+const LoginRoutes=require("./Routes/LoginRoutes");
+const QuestionRoutes=require("./Routes/QuestionsRoutes");
 const {AuthAccessToken}=require("./Middlerware/Auth");
 dotenv.config();
 const cookieParser = require("cookie-parser");
@@ -27,4 +28,5 @@ app.get("/",AuthAccessToken, (req, res) => {
     res.send("Hello, world!");
 });
 
-app.use('/api',loginroutes);
+app.use('/api',LoginRoutes);
+app.use('/api',QuestionRoutes);
