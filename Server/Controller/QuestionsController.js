@@ -65,4 +65,16 @@ const DeleteQuestion=async(req,res,next)=>{
     }
 } 
 
-module.exports={AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion};
+const CompilerFile=async(req,res,next)=>{
+    try{
+         const Question=await service.CompilerFile(req,res,next);
+
+         return Question;
+    }
+    catch(error)
+    {
+       next(error);
+    }
+}
+
+module.exports={AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion,CompilerFile};

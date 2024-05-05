@@ -13,7 +13,10 @@ const cors = require("cors");
 const app=express();
 
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());//if json body is coming
 app.use(express.urlencoded({extended:true})) //if formdata is coming
 app.use(cookieParser());

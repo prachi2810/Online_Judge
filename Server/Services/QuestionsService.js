@@ -72,6 +72,21 @@ class QuestionsService{
 
     } 
 
+    async CompilerFile(req,res,next){
+        try{
+
+            const Question=await this.repository.CompilerFile(req,res,next);
+            return Question;
+
+        }
+        catch(error){
+            next(error);
+        }
+
+    } 
+
+
+
 
 
 }

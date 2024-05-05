@@ -30,7 +30,7 @@ const AuthAccessToken = async (req, res, next) => {
             });
         }
         else {
-            res.status(404).send("Token not found");
+            res.status(401).send("Token not found");
         }
         // console.log(req.cookies.token);
         //   res.status(200).send("message");

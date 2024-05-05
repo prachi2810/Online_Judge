@@ -1,6 +1,8 @@
 const Question = require("../Models/QuestionModel");
 const { QuestionsSchema } = require("../Helper/ValidationSchema");
 
+const {GenerateFile}=require("../Helper/GenerateFile");
+const {ExecuteCpp}=require("../Helper/ExecuteCpp");
 
 
 
@@ -66,7 +68,8 @@ class QuestionsRepository {
         try {
             // const { Title, Description, Level, TestCase, Constraints } = req.body;
 
-
+            // if(req.headers.token)
+             
             const questions = await Question.find();
 
             if (questions.length<=0) {
@@ -127,6 +130,24 @@ class QuestionsRepository {
 
         }
         catch(error){
+            next(error);
+        }
+    }
+    async CompilerFile(req,res,next){
+        const {language="cpp",code}=req.body;
+           
+           if(code==undefined){
+            res.status(400).json({message:"Empty code body"});
+           }
+        try{
+           const FilePath=await GenerateFile(language,code);
+           const output=await ExecuteCpp(FilePath);
+           res.status(200).json({FilePath,output});
+
+
+        }
+        catch(error){
+            // res.status(400).json({message:""});
             next(error);
         }
     }

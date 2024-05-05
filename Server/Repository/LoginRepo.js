@@ -35,11 +35,12 @@ class LoginRepository {
                 fullname: UserInputs.fullname,
                 email: UserInputs.email,
                 dob: UserInputs.dob,
-                password: hashPassword
+                password: hashPassword,
+                role:"user"
             });
 
-            const token = jwt.sign({ id: user._id, email: UserInputs.email }, process.env.SECRET_KEY, { expiresIn: "1d" });
-            const RefreshToken = jwt.sign({ id: user._id, email: UserInputs.email }, process.env.SECRET_KEY_2, { expiresIn: "1y", });
+            const token = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role }, process.env.SECRET_KEY, { expiresIn: "1d" });
+            const RefreshToken = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY_2, { expiresIn: "1y", });
             
             user.token = token;
             user.password = undefined;
@@ -79,8 +80,8 @@ class LoginRepository {
                 return res.status(401).send("Password is incorrect");
             }
 
-            const token = jwt.sign({ id: user._id, email: UserInputs.email }, process.env.SECRET_KEY, { expiresIn: "30s", });
-            const RefreshToken = jwt.sign({ id: user._id, email: UserInputs.email }, process.env.SECRET_KEY_2, { expiresIn: "1y", });
+            const token = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY, { expiresIn: "30s", });
+            const RefreshToken = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY_2, { expiresIn: "120s", });
 
             user.token = token;
             user.password = undefined;
@@ -91,7 +92,7 @@ class LoginRepository {
                     httpOnly: true
                 })
                 .cookie("refreshtoken",RefreshToken,{
-                    expiresIn:new Date(Date.now() + 1 * 365 * 24 * 60 * 60 * 1000),
+                    expiresIn:new Date(Date.now() +  120 * 1000),
                     httpOnly: true
                 })
                 .json({
@@ -113,10 +114,10 @@ class LoginRepository {
     }
 
     async RefreshToken(req, res, next) {
-
+ 
 
         try {
-
+           console.log(req.body);
            const {RefreshToken} =req.body;
 
            if(!RefreshToken){
@@ -126,7 +127,7 @@ class LoginRepository {
            const { email, id: userid } = await AuthRefreshToken(RefreshToken);
            console.log({ email, id: userid });
            const AccessToken= jwt.sign({ id: userid, email: email }, process.env.SECRET_KEY, { expiresIn: "30s", });
-           const RefToken= jwt.sign({ id: userid, email: email }, process.env.SECRET_KEY, { expiresIn: "1y", });
+           const RefToken= jwt.sign({ id: userid, email: email }, process.env.SECRET_KEY, { expiresIn: "60s", });
 
            res.send({AccessToken,refreshtoken:RefToken});
         }
@@ -163,6 +164,21 @@ class LoginRepository {
             next(error);
         }
     }
+
+    async Logout(req,res,next){
+        try{
+           const ClearToken=await res.clearcookie('token');
+           const ClearRefreshToken=await res.clearcookie('refreshtoken');
+
+           res.status(200).json({message:"Logout Sucessfully"});
+        }
+        catch(error){
+            next(error);
+
+        }
+    }
+
+    
 
 
 }

@@ -2,8 +2,8 @@ const express=require("express");
 
 const router=express.Router();
 
-
-const {AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion}= require("../Controller/QuestionsController");
+const {AuthAccessToken}=require('../Middlerware/Auth')
+const {AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion,CompilerFile}= require("../Controller/QuestionsController");
 
 
 router.post('/addquestion',AddQuestion,async(req,res,next)=>{
@@ -22,7 +22,11 @@ router.delete('/deletequestion/:QuestionId',DeleteQuestion,async(req,res,next)=>
 
 });
 
-router.get('/getallquestion',GetAllQuestion,async(req,res,next)=>{
+router.get('/getallquestion',AuthAccessToken,GetAllQuestion,async(req,res,next)=>{
+
+});
+
+router.post('/run',CompilerFile,async(req,res,next)=>{
 
 });
 

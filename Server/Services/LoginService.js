@@ -49,6 +49,16 @@ class LoginService{
            next(error);
          }
     }
+
+    async Logout(req,res,next){
+        try{
+            const LoginUser=await this.repository.Logout(req,res,next);
+            return LoginUser;
+         }
+         catch(error){
+           next(error);
+         }
+    }
 }
 
 module.exports = LoginService;

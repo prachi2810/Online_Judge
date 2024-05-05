@@ -50,6 +50,17 @@ const ForgotPassword=async(req,res,next)=>{
     }
 };
 
-module.exports = {register,login,RefreshToken,ForgotPassword};
+const Logout=async(req,res,next)=>{
+    try{
+        const user=await service.Logout(req,res,next);
+
+        res.status(200).json({message:"Logout Successfully!"});
+    }
+    catch(error){
+       next(error);
+    }
+};
+
+module.exports = {register,login,RefreshToken,ForgotPassword,Logout};
 
 // }
