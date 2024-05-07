@@ -54,6 +54,7 @@ class LoginRepository {
                 return res.status(400).json({ error: errorMessage });
             } else {
                 next(error);
+                res.status(401).json({message:error})
             }
         }
     }
@@ -109,6 +110,7 @@ class LoginRepository {
                 return res.status(400).json({ error: errorMessage });
             } else {
                 next(error);
+                res.status(401).json({message:error})
             }
         }
     }
@@ -117,22 +119,32 @@ class LoginRepository {
  
 
         try {
-           console.log(req.body);
-           const {RefreshToken} =req.body;
-
+           const cookies=req.cookies;
+           console.log(cookies);
+           if(!cookies?.refreshtoken) return res.status(401).json({message:"Unauthorized"});
+        //    console.log(req.body);
+           const RefreshToken=cookies.refreshtoken;
+        //    const {RefreshToken} =req.body;
+            console.lo
            if(!RefreshToken){
             res.status(404).send("Refresh token not found!");
            }
-           
-           const { email, id: userid } = await AuthRefreshToken(RefreshToken);
-           console.log({ email, id: userid });
-           const AccessToken= jwt.sign({ id: userid, email: email }, process.env.SECRET_KEY, { expiresIn: "30s", });
-           const RefToken= jwt.sign({ id: userid, email: email }, process.env.SECRET_KEY, { expiresIn: "60s", });
+           console.log(await AuthRefreshToken(RefreshToken));
+           const { email, id } = await AuthRefreshToken(RefreshToken);
+           console.log(email);
+           if(!email || !id){
+            return res.status(401).json({message:"Refresh Token expired"})
+           }
+
+           console.log({ email, id });
+           const AccessToken= jwt.sign({ id, email: email }, process.env.SECRET_KEY, { expiresIn: "30s", });
+           const RefToken= jwt.sign({ id, email: email }, process.env.SECRET_KEY, { expiresIn: "60s", });
 
            res.send({AccessToken,refreshtoken:RefToken});
         }
         catch (error) {
             next(error);
+            res.status(401).json({message:error})
         }
 
     }
@@ -174,7 +186,7 @@ class LoginRepository {
         }
         catch(error){
             next(error);
-
+            res.status(401).json({message:error})
         }
     }
 

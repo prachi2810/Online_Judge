@@ -69,6 +69,13 @@ class QuestionsRepository {
             // const { Title, Description, Level, TestCase, Constraints } = req.body;
 
             // if(req.headers.token)
+
+            // const token = req.cookies.token;
+
+            // Check if the token exists
+            // if (!token) {
+            //     return res.status(401).json({ message: "Unauthorized: No token provided" });
+            // }
              
             const questions = await Question.find();
 

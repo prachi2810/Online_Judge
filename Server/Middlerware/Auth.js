@@ -17,7 +17,7 @@ const AuthAccessToken = async (req, res, next) => {
         //     }
         // }
 
-        // console.log(req.headers)
+        console.log(req.headers)
 
         if (req.headers.token) {
             jwt.verify(req.headers.token, process.env.SECRET_KEY, (err, payload) => {

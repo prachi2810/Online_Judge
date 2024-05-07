@@ -13,7 +13,7 @@ router.post('/login',login,async(req,res,next)=>{
 
 });
 
-router.post('/refresh-token',RefreshToken,async(req,res,next)=>{
+router.get('/refresh-token',RefreshToken,async(req,res,next)=>{
 
 });
 
