@@ -20,11 +20,9 @@ const Question=new mongoose.Schema(
       TestCase:[{
         Input: {
             type: String,
-            required: true,
         },
         Output: {
             type: String,
-            required: true,
         }
       }],
       Constraints:{

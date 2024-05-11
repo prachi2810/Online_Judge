@@ -22,7 +22,7 @@
     margin-bottom: 10px; /* Add margin between elements */
 }
 
-#fields{
+.fields{
     padding: 4px;
     border: 1px solid gray;
     border-radius: 4px;

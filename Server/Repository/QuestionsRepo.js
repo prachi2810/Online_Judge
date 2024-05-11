@@ -14,7 +14,8 @@ class QuestionsRepository {
         try {
             // const { Title, Description, Level, TestCase, Constraints } = req.body;
 
-            const UserInputs = await QuestionsSchema.validateAsync(req.body);
+            // const UserInputs = await QuestionsSchema.validateAsync(req.body);
+            const UserInputs=req.body;
 
             if(!UserInputs){
                 return res.status(400).json({message:`${UserInputs}`});
@@ -25,7 +26,8 @@ class QuestionsRepository {
                 Description: UserInputs.Description,
                 Level: UserInputs.Level,
                 TestCase: UserInputs.TestCase,
-                Constraints: UserInputs.Constraints
+                Constraints: UserInputs.Constraints,
+                Topic:UserInputs.Topic
             });
 
             await question.save();
@@ -98,7 +100,7 @@ class QuestionsRepository {
         try {
             const { QuestionId } = req.params;
 
-            const UserInputs = await QuestionsSchema.validateAsync(req.body);
+            const UserInputs = req.body;
 
             const UpdateQuestion = await Question.findOneAndUpdate({
 
