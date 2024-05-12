@@ -10,12 +10,14 @@ import Navbar from './components/Navbar/Navbar';
 
 function App() {
   return (
+    
     <div className="App">
       <Routes>
+        
         {/* <Route element={<PersistLogin/>}> */}
         <Route path='/' element={<Login/>}></Route>
         <Route path='/allquestions' element={<><Navbar/><Question/></> }></Route>
-        <Route path='/question/:id' element={<Compiler/>}></Route>
+        <Route path='/question/:id' element={<><Navbar/> <Compiler/></> }></Route>
         <Route path='/addquestion' element={ <> <Navbar/> <AddQuestion/></> }></Route>
         {/* </Route> */}
       </Routes>

@@ -1,0 +1,35 @@
+.question-container {
+    padding: 20px;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.level {
+    font-weight: bold;
+}
+
+.question-description {
+    margin-top: 20px;
+}
+
+.test-case {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #dedede;
+    background-color: #F5F5F5;
+}
+
+.test-input,
+.test-output {
+    margin-top: 10px;
+    margin-left: 10px;
+    
+}
+
+.question-constraints {
+    margin-top: 20px;
+}

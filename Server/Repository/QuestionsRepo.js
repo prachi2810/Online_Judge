@@ -113,7 +113,7 @@ class QuestionsRepository {
             if (!UpdateQuestion) {
                 return res.status(404).json({ message: "Question not found" });
             }
-            res.status(200).json({ message: "Question updated", UpdateQuestion });
+            res.status(201).json({ message: "Question updated", UpdateQuestion });
         }
         catch (error) {
             next(error);

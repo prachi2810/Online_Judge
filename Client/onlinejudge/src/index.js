@@ -10,9 +10,11 @@ import '../node_modules/font-awesome/css/font-awesome.min.css';
 import { AuthProvider } from './context/AuthProvider';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    
     <AuthProvider>
     <BrowserRouter>
     <Routes>
