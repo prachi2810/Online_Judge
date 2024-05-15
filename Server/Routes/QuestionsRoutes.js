@@ -22,7 +22,7 @@ router.delete('/deletequestion/:QuestionId',DeleteQuestion,async(req,res,next)=>
 
 });
 
-router.get('/getallquestion',GetAllQuestion,async(req,res,next)=>{
+router.get('/getallquestion',AuthAccessToken,GetAllQuestion,async(req,res,next)=>{
 
 });
 

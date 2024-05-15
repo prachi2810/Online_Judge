@@ -5,9 +5,7 @@ import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from '../../api/axios';
-// import axios from '../../api/axios';
-import { json } from 'react-router-dom';
-import { useAuth } from '../../Hooks/useAuth';
+import useData from '../../Hooks/useData';
 
 const defaultRegister={
     fullname:'',
@@ -25,7 +23,8 @@ const defaultLogin={
 
 const Login = () => {
 
-    const {setToken}=useAuth();
+   const {setToken}=useData();
+
     const [toggle, setToggle] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [register,setRegister]=useState(defaultRegister);
@@ -69,18 +68,16 @@ const Login = () => {
            }
            );
            console.log(response);
-        //    setRefreshToken(response.data.RefreshToken);
            const token=response?.data?.token;
-           console.log("loginacc",token)
-           setToken({token})
-        //    refreshTokena(response.data.RefreshToken);
-            navigate('/allquestions');
+           console.log("loginacc",token);
+           setToken({token});
+           navigate('/allquestions');
            setError('');
 
          }
          catch(error){
             console.error(error);
-            setError(error.response.data.error);
+            // setError(error.response.data.error);
          }
     }
 

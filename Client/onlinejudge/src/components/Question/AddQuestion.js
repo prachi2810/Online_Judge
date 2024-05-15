@@ -1,7 +1,7 @@
 import axios from "../../api/axios";
 import { useState } from "react"
 
-import UseAxiosPrivate from '../../Hooks/UseAxiosPrivate';
+import UseAxiosPrivate from '../../Hooks/useAxiosPrivate';
 import { axiosUsePrivate } from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';

@@ -3,15 +3,15 @@ import { useEffect, useState } from 'react';
 import './Question.css';
 import axiosUsePrivate from '../../api/axios';
 import Cookies from 'js-cookie';
-import { useAuth } from '../../Hooks/useAuth';
+import useAuth from '../../Hooks/useData';
 import axios from 'axios';
-import UseAxiosPrivate from '../../Hooks/UseAxiosPrivate';
+import UseAxiosPrivate from '../../Hooks/useAxiosPrivate';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from 'react-tooltip';
-import { ToastContainer,toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 const levelMap = {
@@ -46,15 +46,15 @@ function Question() {
     const [updateQuestion, setUpdateQuestion] = useState(defaultQuestion);
     const [deleteQue, setDeleteQue] = useState(false);
     const [deleteId, setDeleteId] = useState(0);
-    const [search,setSearch]=useState('');
-    const [filterTopic,setFilterTopic]=useState(0);
-    const [filterLevel,setFilterLevel]=useState(0);
+    const [search, setSearch] = useState('');
+    const [filterTopic, setFilterTopic] = useState(0);
+    const [filterLevel, setFilterLevel] = useState(0);
     const levels = ['Low', 'Medium', 'High'];
     const topics = ['Basic Beginner', 'Array', 'Strings'];
 
 
     const navigate = useNavigate();
-    const notifyUpdateQue=()=>toast.success("Question Updated!");
+    const notifyUpdateQue = () => toast.success("Question Updated!");
 
     const getAllQuestion = async () => {
         // const token=Cookies.get('token');
@@ -69,7 +69,10 @@ function Question() {
             // if(error.response.data='Token not found'){
 
             // }
-            console.log(error);
+            // if (error.response.status == 401 || error.response.data == "Token not found") {
+            //     navigate('/');
+            // }
+            console.log("error",error);
         }
     }
 
@@ -108,7 +111,7 @@ function Question() {
                     withCredentials: true
                 })
             console.log(response);
-            if(response.status==201){
+            if (response.status == 201) {
                 setModalOpen(false);
             }
         }
@@ -118,20 +121,20 @@ function Question() {
     }
 
     const deleteQuestion = async (id) => {
-   
-            try {
-                const response = await axiosPrivate.delete(`/deletequestion/${id}`, JSON.stringify(defaultQuestion),
-                    {
-                        headers: { 'Content-Type': 'application/json' },
-                        withCredentials: true
-                    })
-                getAllQuestion();
-                setDeleteQue(false);
-            }
-            catch (error) {
 
-            }
-        
+        try {
+            const response = await axiosPrivate.delete(`/deletequestion/${id}`, JSON.stringify(defaultQuestion),
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true
+                })
+            getAllQuestion();
+            setDeleteQue(false);
+        }
+        catch (error) {
+
+        }
+
 
     }
 
@@ -154,7 +157,7 @@ function Question() {
     useEffect(() => {
 
         getAllQuestion();
-        
+
     }, [updateId])
 
     useEffect(() => {
@@ -171,22 +174,22 @@ function Question() {
     useEffect(() => {
         console.log(filterTopic);
         if (filterTopic == 0) {
-            getAllQuestion();   
+            getAllQuestion();
         } else {
             const filteredQuestions = questions.filter((ques) => {
-                return ques.Topic==filterTopic;
+                return ques.Topic == filterTopic;
             });
             setQuestions(filteredQuestions);
         }
     }, [filterTopic]);
 
     useEffect(() => {
-        
+
         if (filterLevel == 0) {
-            getAllQuestion();   
+            getAllQuestion();
         } else {
             const filteredQuestions = questions.filter((ques) => {
-                return ques.Level==filterLevel;
+                return ques.Level == filterLevel;
             });
             setQuestions(filteredQuestions);
         }
@@ -327,7 +330,7 @@ function Question() {
                                                 <button type="button" className="btn btn-secondary" onClick={() => { setModalOpen(false) }}>Close</button>
                                                 <button type="submit" className="btn btn-primary">Update</button>
                                             </div>
-                                            <ToastContainer/>
+                                            <ToastContainer />
                                             {/* <div class="modal-footer">
                                                 <button type="button" className="btn btn-secondary" onClick={() => { setModalOpen(false) }}>Close</button>
                                                
@@ -345,79 +348,80 @@ function Question() {
 
             <div>
             </div>
-            
+
             <div className='row'>
                 <div className='col-md-12'>
-                <div className='allfilters'>
-                    <select className="filter-select" id="topicFilter" placeholder="Topic" onChange={(e)=>{setFilterTopic(e.target.value)}}>
-                        <option value="">Topic</option>
-                        {
-                            topics.map((topic, index) =>
-                            (<option key={index} value={index + 1}>{topic}</option>
+                    <div className='allfilters'>
+                        <select className="filter-select" id="topicFilter" placeholder="Topic" onChange={(e) => { setFilterTopic(e.target.value) }}>
+                            <option value="">Topic</option>
+                            {
+                                topics.map((topic, index) =>
+                                (<option key={index} value={index + 1}>{topic}</option>
 
-                            ))
-                        }
-                    </select>
+                                ))
+                            }
+                        </select>
 
-                    <select className="filter-select" id="levelFilter" placeholder="Level" onChange={(e)=>{setFilterLevel(e.target.value)}}>
-                        <option value={0}>Level</option>
+                        <select className="filter-select" id="levelFilter" placeholder="Level" onChange={(e) => { setFilterLevel(e.target.value) }}>
+                            <option value={0}>Level</option>
 
-                        {levels.map((level, index) => (
-                            <option key={index} value={index + 1}>{level}</option>
-                        ))}
+                            {levels.map((level, index) => (
+                                <option key={index} value={index + 1}>{level}</option>
+                            ))}
 
 
-                    </select>
-                    <input class="form-control me-4" type="search" onChange={(e)=>{setSearch(e.target.value)}} placeholder="Search" aria-label="Search" />
-                    {/* <button class="btn btn-outline-success" type="submit">Search</button> */}
-                    <button type="button" className='btn btn-primary' onClick={() => { navigate('/addquestion') }}>Add</button>
+                        </select>
+                        <input class="form-control me-4" type="search" onChange={(e) => { setSearch(e.target.value) }} placeholder="Search" aria-label="Search" />
+                        {/* <button class="btn btn-outline-success" type="submit">Search</button> */}
+                        <button type="button" className='btn btn-primary' onClick={() => { navigate('/addquestion') }}>Add</button>
 
+                    </div>
                 </div>
-                </div>
-                </div>
+            </div>
 
-                <div className='tbl'>
-                    <div className='container-fluid'>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Title</th>
-                                    <th scope="col">Topic</th>
-                                    <th scope="col">Level</th>
-                                    <th scope="col">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {questions && questions.map((ques, index) => (
-                                    <tr key={index} className='rows'>
-                                        <th scope="row" style={{ cursor: "pointer", textDecoration: "none" }} onMouseEnter={(e) => { e.target.style.textDecoration = "underline" }} onMouseLeave={(e) => { e.target.style.textDecoration = "none" }} onClick={() => { gotoQuestion(ques._id) }}>{ques.Title}</th>
-                                        <td>{TopicMap[ques.Topic]}</td>
-                                        <td>{levelMap[ques.Level]}</td>
-                                        <td>
-                                            {/* <button className='btn btn-primary' onClick={() => { setModalOpen(true); setUpdateId(ques._id); console.log("ff",updateId);getQuestion(); }}>edit</button> */}
-                                            <button className='btn btn-primary' onClick={() => {
+            <div className='tbl'>
+                <div className='container-fluid'>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Topic</th>
+                                <th scope="col">Level</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {questions && questions.map((ques, index) => (
+                                <tr key={index} className='rows'>
+                                    <th scope="row" style={{ cursor: "pointer", textDecoration: "none" }} onMouseEnter={(e) => { e.target.style.textDecoration = "underline" }} onMouseLeave={(e) => { e.target.style.textDecoration = "none" }} onClick={() => { gotoQuestion(ques._id) }}>{ques.Title}</th>
+                                    <td>{TopicMap[ques.Topic]}</td>
+                                    <td>{levelMap[ques.Level]}</td>
+                                    <td>
+                                        {/* <button className='btn btn-primary' onClick={() => { setModalOpen(true); setUpdateId(ques._id); console.log("ff",updateId);getQuestion(); }}>edit</button> */}
+                                        <button className='btn btn-primary' data-bs-toggle="tooltip" data-bs-placement="top"
+                                            data-bs-custom-class="custom-tooltip"
+                                            data-bs-title="This top tooltip is themed via CSS variables." 
+                                            onClick={() => {
                                                 setUpdateId(ques._id); // Wait for the question data to be fetched
                                                 setModalOpen(true); // Open the modal
                                                 console.log("ff", updateId);
 
                                             }}><FontAwesomeIcon icon={faPenToSquare} /></button>
-                                            <button className='btn btn-primary' style={{ marginLeft: "30px" }} onClick={() => { confirmDelete(ques._id) }} data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Question">
-                                                <FontAwesomeIcon icon={faTrash} />
-                                                <Tooltip id={`tooltip-${ques._id}`} place="top" effect="solid" delayShow={300}>
-                                                    Delete Question
-                                                </Tooltip>
-                                            </button>
+                                        <button className='btn btn-primary' style={{ marginLeft: "30px" }} onClick={() => { confirmDelete(ques._id) }} data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Question">
+                                            <FontAwesomeIcon icon={faTrash} />
+                                      
+                                        </button>
 
-                                            {/* <button></button> */}
-                                        </td>
+                                        {/* <button></button> */}
+                                    </td>
 
-                                    </tr>
-                                ))}
+                                </tr>
+                            ))}
 
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
+            </div>
         </>
     )
 

@@ -10,13 +10,13 @@ if(!fs.existsSync(OutputPath)){
 }
 
 
-const ExecuteCpp=async(filepath)=>{
+const ExecuteCpp=async(filepath,inputpath)=>{
    const JobID=path.basename(filepath.split(".")[0]);
    const OutPath=path.join(OutputPath,`${JobID}.exe`);
 
    return new Promise((resolve, reject) => {
     // Run g++ filename then store output in outpath then go to output folder run output file
-    exec(`g++ ${filepath} -o ${OutPath} && cd ${OutputPath} && ./${JobID}.exe`, (error, stdout, stderr) => {
+    exec(`g++ ${filepath} -o ${OutPath} && cd ${OutputPath} && ./${JobID}.exe < ${inputpath}`, (error, stdout, stderr) => {
         if (error) {
             reject(error);
         }

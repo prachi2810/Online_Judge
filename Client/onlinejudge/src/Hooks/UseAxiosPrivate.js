@@ -1,20 +1,18 @@
-import UseRefreshToken from "./UseRefreshToken"
-import { useAuth } from "./useAuth";
 import { useEffect } from "react";
+import useRefreshToken from "./useRefreshToken";
+import useData from "./useData";
 
-const UseAxiosPrivate=(axios)=>{
-      const refresh=UseRefreshToken();
-      const {token}=useAuth();
+const useAxiosPrivate = (axios) => {
+    const refresh = useRefreshToken();
+    const { token } = useData();
+    // console.log("axios private",token);
+    useEffect(() => {
 
-      useEffect(()=>{
-        // console.log("tokenn",token.token);
         const requestIntercept = axios.interceptors.request.use(
             config => {
-                // console.log("config",config);
                 if (!config.headers['token']) {
-                    config.headers['token'] = token.token;
+                    config.headers['token'] = token.accessToken;
                 }
-                // console.log("config1",config);
                 return config;
             }, (error) => Promise.reject(error)
         );
@@ -37,11 +35,9 @@ const UseAxiosPrivate=(axios)=>{
             axios.interceptors.request.eject(requestIntercept);
             axios.interceptors.response.eject(responseIntercept);
         }
-        
+    }, [token, refresh,axios])
 
-      },[token,refresh,axios]);
-
-      return axios;
+    return axios;
 }
 
-export default UseAxiosPrivate;
+export default useAxiosPrivate;

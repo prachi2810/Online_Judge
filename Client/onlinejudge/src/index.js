@@ -9,6 +9,8 @@ import '../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../node_modules/font-awesome/css/font-awesome.min.css'; 
 import { AuthProvider } from './context/AuthProvider';
 import 'react-toastify/dist/ReactToastify.css';
+import {Provider} from 'react-redux';
+import {store} from './Redux/store.js';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -16,11 +18,13 @@ root.render(
   <React.StrictMode>
     
     <AuthProvider>
+    {/* <Provider store={store}> */}
     <BrowserRouter>
     <Routes>
           <Route path='/*' element={<App />}/>  
         </Routes>
     </BrowserRouter>
+    {/* </Provider> */}
     </AuthProvider>
     
   </React.StrictMode>

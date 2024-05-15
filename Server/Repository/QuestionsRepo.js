@@ -3,6 +3,7 @@ const { QuestionsSchema } = require("../Helper/ValidationSchema");
 
 const {GenerateFile}=require("../Helper/GenerateFile");
 const {ExecuteCpp}=require("../Helper/ExecuteCpp");
+const {GenerateInputFile}=require("../Helper/GenerateInputFile");
 
 
 
@@ -143,20 +144,20 @@ class QuestionsRepository {
         }
     }
     async CompilerFile(req,res,next){
-        const {language="cpp",code}=req.body;
+        const {language="cpp",code,input}=req.body;
            
            if(code==undefined){
             res.status(400).json({message:"Empty code body"});
            }
         try{
            const FilePath=await GenerateFile(language,code);
-           const output=await ExecuteCpp(FilePath);
+           const InputPath=await GenerateInputFile(input);
+           const output=await ExecuteCpp(FilePath,InputPath);
            res.status(200).json({FilePath,output});
 
 
         }
         catch(error){
-            // res.status(400).json({message:""});
             next(error);
         }
     }

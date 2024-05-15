@@ -6,6 +6,7 @@ import Question from './components/Question/Question';
 import Compiler from './components/Compiler/Compiler';
 import AddQuestion from './components/Question/AddQuestion';
 import Navbar from './components/Navbar/Navbar';
+import PersistLogin from './components/PersistLogin';
 // import PersistLogin from './components/PersistLogin';
 
 function App() {
@@ -15,10 +16,12 @@ function App() {
       <Routes>
         
         {/* <Route element={<PersistLogin/>}> */}
+        <Route element={<PersistLogin/>}> 
         <Route path='/' element={<Login/>}></Route>
         <Route path='/allquestions' element={<><Navbar/><Question/></> }></Route>
         <Route path='/question/:id' element={<><Navbar/> <Compiler/></> }></Route>
         <Route path='/addquestion' element={ <> <Navbar/> <AddQuestion/></> }></Route>
+        </Route>
         {/* </Route> */}
       </Routes>
     </div>
