@@ -2,13 +2,12 @@ import axios from "axios";
 import { useAuth } from '../context/AuthProvider';
 import Cookies from "js-cookie";
 
-const api = axios.create({
+export default axios.create({
     baseURL: 'http://localhost:5137/api'
 });
 
-export default api;
 
-export const axiosUsePrivate = axios.create({
+export const axiosUserPrivate = axios.create({
     baseURL: 'http://localhost:5137/api',
     headers: { 'Content-Type': 'application/json' },
     withCredentials: true

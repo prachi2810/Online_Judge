@@ -1,6 +1,6 @@
 FROM node:18-alpine
 WORKDIR /app
-RUN apk update && apk add --no-cache g++
+RUN apk update && apk add --no-cache g++ openjdk11 python3
 COPY package.json .
 RUN npm i
 COPY . . 

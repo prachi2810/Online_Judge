@@ -15,25 +15,26 @@
 }
 
 .tbl{
-    margin-top: 10px;
-    padding-left: 100px;
-    padding-right: 100px;
+    margin-top: 3%;
+    padding-left: 8%;
+    padding-right: 7%;
 }
 
 .tbl .rows{
-   height: 50px;
+   height: 6%;
 }
 
-.allfilters{
-    margin-top: 30px;
-    padding-left: 100px;
-    padding-right: 100px;
-    margin-left: 20px;
-}
+/* .allfilters{
+    margin-top: 3%;
+    padding-left: 8%;
+    padding-right: 7%;
+    margin-left: 2%;
+} */
 
 .allfilters {
     display: flex;
     align-items: center;
+    /* justify-content: center; */
 }
 
 .allfilters .filter-select {
@@ -55,5 +56,86 @@
 .allfilters .filter-select option {
     padding: 8px;
 }
+
+.loader {
+    animation: rotate 1s infinite;
+    height: 50px;
+    width: 50px;
+  }
+
+  .loader:before,
+  .loader:after {
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 20px;
+    width: 20px;
+  }
+  .loader:before {
+    animation: ball1 1s infinite;
+    background-color: #8cc9f3;
+    box-shadow: 30px 0 0 #95BFFF;
+    margin-bottom: 10px;
+  }
+  .loader:after {
+    animation: ball2 1s infinite;
+    background-color: #95BFFF;;
+    box-shadow: 30px 0 0 #8cc9f3;
+  }
+
+  @keyframes rotate {
+    0% { transform: rotate(0deg) scale(0.8) }
+    50% { transform: rotate(360deg) scale(1.2) }
+    100% { transform: rotate(720deg) scale(0.8) }
+  }
+
+  @keyframes ball1 {
+    0% {
+      box-shadow: 30px 0 0 #95BFFF;
+    }
+    50% {
+      box-shadow: 0 0 0 #95BFFF;
+      margin-bottom: 0;
+      transform: translate(15px, 15px);
+    }
+    100% {
+      box-shadow: 30px 0 0 #95BFFF;
+      margin-bottom: 10px;
+    }
+  }
+/* #95BFFF,#8cc9f3 */
+  @keyframes ball2 {
+    0% {
+      box-shadow: 30px 0 0 #8cc9f3;
+    }
+    50% {
+      box-shadow: 0 0 0 #8cc9f3;
+      margin-top: -20px;
+      transform: translate(15px, 15px);
+    }
+    100% {
+      box-shadow: 30px 0 0 #8cc9f3;
+      margin-top: 0;
+    }
+  }
+
+  .tag{
+    font-size:12px;
+    padding: 4px 8px;
+
+    &.Low{
+        background-color: #ddf9ee;
+        color:#0a905d;
+    }
+    &.Medium{
+        background-color: #f2efbc;
+        color:#7e7604;
+    }
+    &.High{
+        background-color: #fde7ea;
+        color:#e77f89;
+    }
+  }
+  
 
 

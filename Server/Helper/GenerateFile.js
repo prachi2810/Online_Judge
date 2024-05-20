@@ -14,15 +14,12 @@ if(!fs.existsSync(DirCodes)){
 const GenerateFile=async(language,code)=>{
    const JobID=uuidv4();
    const FileName=`${JobID}.${language}`;
+   console.log("filename",FileName);
    const FilePath=path.join(DirCodes,FileName);
 
    await fs.writeFileSync(FilePath,code);
 
    return FilePath;
-
-
-
-
 }
 
 module.exports={

@@ -6,12 +6,19 @@ const AuthLoginSchema=Joi.object({
     password:Joi.string().min(8).regex(/^[a-zA-Z0-9]{3,30}$/).required(),
 })
 
-const AuthRegisterSchema=Joi.object({
-    fullname:Joi.string().min(5).max(30).required(),
-    email:Joi.string().email().min(5).max(30).lowercase().required(),
-    password:Joi.string().min(8).regex(/^[a-zA-Z0-9]{3,30}$/).required(),
-    dob:Joi.date().required()
-})
+const AuthRegisterSchema = Joi.object({
+    fullname: Joi.string().required(),
+    email: Joi.string().email().lowercase().required(),
+    password: Joi.string()
+        .min(8)
+        .max(30)
+        .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,30}$/)
+        .required()
+        .messages({
+            'string.pattern.base': 'Password must contain at least one letter, one number, and one special character.',
+        }),
+    dob: Joi.date().required(),
+});
 
 const QuestionsSchema=Joi.object({
     Title:Joi.string().min(5).max(30).required(),

@@ -1,7 +1,7 @@
 const express=require("express");
 const router=express.Router();
 
-const {register,login,RefreshToken,ForgotPassword,Logout} = require("../Controller/LoginController");
+const {register,login,RefreshToken,ForgotPassword,Logout,VerifyUser} = require("../Controller/LoginController");
 
 const {AuthAccessToken}=require("../Middlerware/Auth");
 
@@ -22,6 +22,10 @@ router.put('/forgot-password',ForgotPassword,async(req,res,next)=>{
 });
 
 router.delete('/logout',Logout,async(req,res,next)=>{
+
+});
+
+router.get('/isLoggedIn',VerifyUser,async(req,res,next)=>{
 
 });
 

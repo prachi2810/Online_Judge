@@ -1,8 +1,8 @@
 import axios from "../../api/axios";
 import { useState } from "react"
 
-import UseAxiosPrivate from '../../Hooks/useAxiosPrivate';
-import { axiosUsePrivate } from "../../api/axios";
+import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
+import { axiosUserPrivate } from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -28,7 +28,7 @@ function AddQuestion() {
     const topics = ['Basic Beginner', 'Array', 'Strings'];
 
     const [openModal, setOpenModal] = useState(false);
-    const axiosPrivate = UseAxiosPrivate(axiosUsePrivate);
+    const axiosPrivate = useAxiosPrivate(axiosUserPrivate);
 
     const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ function AddQuestion() {
     const notifyQuestionAdd = () => toast.success("Question Added!");
 
     const addquestion = async (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         try {
             const response = await axiosPrivate.post('/addquestion', JSON.stringify(addQuestion),
                 {

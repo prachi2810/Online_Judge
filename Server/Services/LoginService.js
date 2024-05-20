@@ -59,6 +59,15 @@ class LoginService{
            next(error);
          }
     }
+    async VerifyUser(req,res,next){
+        try{
+            const LoginUser=await this.repository.VerifyUser(req,res,next);
+            return LoginUser;
+         }
+         catch(error){
+           next(error);
+         }
+    }
 }
 
 module.exports = LoginService;

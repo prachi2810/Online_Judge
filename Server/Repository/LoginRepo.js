@@ -20,6 +20,7 @@ class LoginRepository {
             //     return res.status(400).send("Please enter all information");
 
             // }
+            console.log(AuthRegisterSchema.describe());
             const UserInputs = await AuthRegisterSchema.validateAsync(req.body);
 
             const ExistingUser = await User.findOne({ email: UserInputs.email });
@@ -40,7 +41,7 @@ class LoginRepository {
             });
 
             const token = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role }, process.env.SECRET_KEY, { expiresIn: "1d" });
-            const RefreshToken = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY_2, { expiresIn: "1y", });
+            const RefreshToken = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY_2, { expiresIn: "7d", });
             
             user.token = token;
             user.password = undefined;
@@ -81,8 +82,8 @@ class LoginRepository {
                 return res.status(401).send("Password is incorrect");
             }
 
-            const token = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY, { expiresIn: "30s", });
-            const RefreshToken = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY_2, { expiresIn: "120s", });
+            const token = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY, { expiresIn: "1d", });
+            const RefreshToken = jwt.sign({ id: user._id, email: UserInputs.email,role:user.role  }, process.env.SECRET_KEY_2, { expiresIn: "7d", });
 
             user.token = token;
             user.password = undefined;
@@ -130,15 +131,15 @@ class LoginRepository {
             res.status(404).send("Refresh token not found!");
            }
            console.log(await AuthRefreshToken(RefreshToken));
-           const { email, id } = await AuthRefreshToken(RefreshToken);
+           const { email, id,role } = await AuthRefreshToken(RefreshToken);
            console.log(email);
            if(!email || !id){
             return res.status(401).json({message:"Refresh Token expired"})
            }
 
            console.log({ email, id });
-           const AccessToken= jwt.sign({ id, email: email }, process.env.SECRET_KEY, { expiresIn: "30s", });
-           const RefToken= jwt.sign({ id, email: email }, process.env.SECRET_KEY, { expiresIn: "60s", });
+           const AccessToken= jwt.sign({ id, email: email,role:role }, process.env.SECRET_KEY, { expiresIn: "1d", });
+           const RefToken= jwt.sign({ id, email: email,role:role }, process.env.SECRET_KEY, { expiresIn: "7d", });
 
            res.send({AccessToken,refreshtoken:RefToken});
         }
@@ -179,14 +180,35 @@ class LoginRepository {
 
     async Logout(req,res,next){
         try{
-           const ClearToken=await res.clearcookie('token');
-           const ClearRefreshToken=await res.clearcookie('refreshtoken');
+            console.log("clearing"); 
+           const ClearToken=await res.clearCookie('token', { httpOnly: true });
+           const ClearRefreshToken=await res.clearCookie('refreshtoken', { httpOnly: true });
+           
 
            res.status(200).json({message:"Logout Sucessfully"});
         }
         catch(error){
             next(error);
             res.status(401).json({message:error})
+        }
+    }
+
+    async VerifyUser(req,res,next){
+        try{
+            const token=req.cookies.token;
+            if(!token){
+                res.status(401).send("Access Denied...");
+
+            }
+            else{
+                const decoded = jwt.verify(token, process.env.SECRET_KEY);
+                res.status(200).send(decoded);
+            }
+
+        }
+        catch(error){
+            next(error);
+            res.status(400).json({message:error});
         }
     }
 

@@ -61,6 +61,18 @@ const Logout=async(req,res,next)=>{
     }
 };
 
-module.exports = {register,login,RefreshToken,ForgotPassword,Logout};
+
+const VerifyUser=async(req,res,next)=>{
+    try{
+        const user=await service.VerifyUser(req,res,next);
+
+        res.status(200).json(user);
+    }
+    catch(error){
+       next(error);
+    }
+};
+
+module.exports = {register,login,RefreshToken,ForgotPassword,Logout,VerifyUser};
 
 // }

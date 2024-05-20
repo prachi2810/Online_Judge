@@ -85,6 +85,20 @@ class QuestionsService{
 
     } 
 
+    async SubmitCode(req,res,next){
+
+        try{
+
+            const Question=await this.repository.SubmitCode(req,res,next);
+            return Question;
+
+        }
+        catch(error){
+            next(error);
+        }
+
+    }
+
 
 
 

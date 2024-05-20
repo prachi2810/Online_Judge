@@ -2,8 +2,9 @@ const Question = require("../Models/QuestionModel");
 const { QuestionsSchema } = require("../Helper/ValidationSchema");
 
 const {GenerateFile}=require("../Helper/GenerateFile");
-const {ExecuteCpp}=require("../Helper/ExecuteCpp");
+const {ExecuteCode}=require("../Helper/ExecuteCode");
 const {GenerateInputFile}=require("../Helper/GenerateInputFile");
+const {ExecuteSubmitCode}=require("../Helper/ExecuteSubmitCode");
 
 
 
@@ -144,18 +145,50 @@ class QuestionsRepository {
         }
     }
     async CompilerFile(req,res,next){
-        const {language="cpp",code,input}=req.body;
-           
-           if(code==undefined){
-            res.status(400).json({message:"Empty code body"});
-           }
+       
         try{
+            const {language,code,input}=req.body;
+            console.log(`Request received - Language: ${language}, Code: ${code}, Input: ${input}`); // Log request
+
+            if(code==undefined){
+             res.status(400).json({message:"Empty code body"});
+            }
            const FilePath=await GenerateFile(language,code);
            const InputPath=await GenerateInputFile(input);
-           const output=await ExecuteCpp(FilePath,InputPath);
+           const output=await ExecuteCode(language,FilePath,InputPath);
            res.status(200).json({FilePath,output});
 
 
+        }
+        catch(error){
+            next(error);
+        }
+    }
+
+    async SubmitCode(req,res,next){
+        try{
+            const {qid}=req.params;
+
+            const {language,code}=req.body;
+
+            const question=await Question.findOne({_id:qid});
+            const FilePath=await GenerateFile(language,code);
+            const output=await ExecuteSubmitCode(FilePath,question.TestCase);
+            console.log("Output",output);
+            const results = output.map((result, index) => {
+                if (result.success) {
+                    return `Test case ${index + 1} passed for input: ${result.testcase.Input}`;
+                } else {
+                    if (result.error) {
+                        return `Test case ${index + 1} failed for input: ${result.testcase.Input}. Error: ${result.error}`;
+                    } else {
+                        return `Test case ${index + 1} failed for input: ${result.testcase.Input}. Expected: ${result.expected}, Got: ${result.result}`;
+                    }
+                }
+            }).join('\n');
+    
+            res.status(200).send(results);
+            
         }
         catch(error){
             next(error);

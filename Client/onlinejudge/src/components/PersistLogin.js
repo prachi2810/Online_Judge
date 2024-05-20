@@ -22,10 +22,10 @@ const PersistLogin=()=>{
         !token?.token ? verifyRefreshToken() : setIsLoading(false)
     },[])
 
-    useEffect(()=>{
-        console.log(`isLoading ${isLoading}`);
-        console.log(`aT: ${JSON.stringify(token?.token)}`);
-    },[isLoading])
+    // useEffect(()=>{
+    //     console.log(`isLoading ${isLoading}`);
+    //     console.log(`aT: ${JSON.stringify(token?.token)}`);
+    // },[isLoading])
 
     return (
         <>

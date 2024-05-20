@@ -4,7 +4,7 @@
     background-color: rgb(251, 250, 250); 
 }
 
-.container {
+.containerclass {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,7 +31,7 @@
 }
 
 .toggle-password{
-    margin-left: -50px;
+    margin-left: -33px;
     border: 0;
     background-color: white;
     font-size: smaller;

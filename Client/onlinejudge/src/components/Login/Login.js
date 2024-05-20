@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from '../../api/axios';
 import useData from '../../Hooks/useData';
+import {faEye,faEyeSlash} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const defaultRegister={
     fullname:'',
@@ -76,8 +78,8 @@ const Login = () => {
 
          }
          catch(error){
-            console.error(error);
-            // setError(error.response.data.error);
+            // console.error(error);
+            setError(error.response.data.error);
          }
     }
 
@@ -111,7 +113,7 @@ const Login = () => {
     return (
         <>
             <div className='background'>
-                <div className="container">
+                <div className="containerclass">
                     {!toggle && (
                         <div className="box">
                             {error && <div className="error" style={{color:'red'}}>{error.replace(/"/g, '')}</div>}
@@ -127,12 +129,14 @@ const Login = () => {
                                 <label id='fieldsname' for="password">Password</label>
                                 <br />
                                 <input className='fields' id='password' type={passwordVisible ? "text" : "password"} name="password" onChange={(e)=>{setLogin({...login,password:e.target.value})}}  />
-                                <button className="toggle-password" onClick={togglePasswordVisibility}>
+                                <button type='button' className="toggle-password" onClick={togglePasswordVisibility}>
                                     {passwordVisible ? (
-                                        'Hide'
+                                        // 'Hide'
+                                        <FontAwesomeIcon icon={faEye}/>
                                         // <i className="fas fa-eye-slash"></i>
                                     ) : (
-                                        'Show'
+                                        <FontAwesomeIcon icon={faEyeSlash}/>
+                                        // 'Show'
                                         // <i className="fas fa-eye"></i>
                                     )}
                                 </button>

@@ -77,4 +77,16 @@ const CompilerFile=async(req,res,next)=>{
     }
 }
 
-module.exports={AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion,CompilerFile};
+const SubmitCode=async(req,res,next)=>{
+    try{
+         const Question=await service.SubmitCode(req,res,next);
+
+         return Question;
+    }
+    catch(error)
+    {
+       next(error);
+    }
+}
+
+module.exports={AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion,CompilerFile,SubmitCode};
