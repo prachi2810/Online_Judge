@@ -18,15 +18,25 @@ const ExecuteCpp=async(filepath,inputpath)=>{
     // Run g++ filename then store output in outpath then go to output folder run output file
     exec(`g++ ${filepath} -o ${OutPath} && cd ${OutputPath} && ./${JobID}.out < ${inputpath}`, (error, stdout, stderr) => {
         if (error) {
-            reject(error);
+            const errorDetails = extractRelevantErrorDetails(error.message);
+                reject({ error: 'Compilation error', details: errorDetails });
         }
         if (stderr) {
-            reject(stderr);
+            const errorDetails = extractRelevantErrorDetails(stderr);
+                reject({ error: 'Runtime error', details: errorDetails });
         }
         resolve(stdout);
     });
 });
 };
+
+const extractRelevantErrorDetails = (errorMessage) => {
+    const errorLines = errorMessage.split('\n');
+    const relevantLines = errorLines.filter(line => /error:|generated/.test(line));
+    const cleanedLines = relevantLines.map(line => line.replace(/\/.*?\.cpp:\d+:\d+: /, '')); // Remove file path and line number details
+    return cleanedLines.join('\n');
+};
+
 
 const ExecuteJava = (filepath, inputpath) => {
     const jobID=path.basename(filepath.split(".")[0]);

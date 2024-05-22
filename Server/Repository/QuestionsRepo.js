@@ -1,10 +1,12 @@
 const Question = require("../Models/QuestionModel");
+const Submission=require("../Models/SubmissionModel");
 const { QuestionsSchema } = require("../Helper/ValidationSchema");
 
 const {GenerateFile}=require("../Helper/GenerateFile");
 const {ExecuteCode}=require("../Helper/ExecuteCode");
 const {GenerateInputFile}=require("../Helper/GenerateInputFile");
 const {ExecuteSubmitCode}=require("../Helper/ExecuteSubmitCode");
+const User = require("../Models/UserModel");
 
 
 
@@ -29,7 +31,8 @@ class QuestionsRepository {
                 Level: UserInputs.Level,
                 TestCase: UserInputs.TestCase,
                 Constraints: UserInputs.Constraints,
-                Topic:UserInputs.Topic
+                Topic:UserInputs.Topic,
+                Solution:UserInputs.Solution
             });
 
             await question.save();
@@ -161,7 +164,11 @@ class QuestionsRepository {
 
         }
         catch(error){
-            next(error);
+            if (error.error && error.details) {
+                res.status(400).json({ error: error.error, details: error.details });
+            } else {
+                next(error);
+            }
         }
     }
 
@@ -169,31 +176,81 @@ class QuestionsRepository {
         try{
             const {qid}=req.params;
 
-            const {language,code}=req.body;
+            const {language,code,email}=req.body;
 
             const question=await Question.findOne({_id:qid});
             const FilePath=await GenerateFile(language,code);
             const output=await ExecuteSubmitCode(FilePath,question.TestCase);
             console.log("Output",output);
-            const results = output.map((result, index) => {
-                if (result.success) {
-                    return `Test case ${index + 1} passed for input: ${result.testcase.Input}`;
-                } else {
-                    if (result.error) {
-                        return `Test case ${index + 1} failed for input: ${result.testcase.Input}. Error: ${result.error}`;
-                    } else {
-                        return `Test case ${index + 1} failed for input: ${result.testcase.Input}. Expected: ${result.expected}, Got: ${result.result}`;
-                    }
-                }
-            }).join('\n');
+            // const results = output.map((result, index) => {
+            //     if (result.success) {
+            //         return `Test case ${index + 1} passed for input: ${result.testcase.Input}`;
+            //     } else {
+            //         if (result.error) {
+            //             return `Test case ${index + 1} failed for input: ${result.testcase.Input}. Error: ${result.error}`;
+            //         } else {
+            //             return `Test case ${index + 1} failed for input: ${result.testcase.Input}. Expected: ${result.expected}, Got: ${result.result}`;
+            //         }
+            //     }
+            // });
+            const results = output.map((result, index) => ({
+                testCaseNumber: index + 1,
+                input: result.testcase.Input,
+                success: result.success,
+                error: result.error ? result.error : null,
+                expected: result.success ? null : result.expected,
+                got: result.success ? null : result.result
+            }));
+
+            const AllTestCases=results.every(result=>result.success);
+            const Status=AllTestCases ? 'Accepted' : 'Failed';
+
+            const user=await User.findOne({email:email});
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            const newSubmission = new Submission({
+                QuestionId: qid,
+                UserId: user._id,
+                Status: Status,
+                SubmittedAt: new Date(),
+            });
     
-            res.status(200).send(results);
+            await newSubmission.save();
+
+    
+            res.status(200).json({ results });
             
         }
         catch(error){
             next(error);
         }
     }
+
+    async GetSubmissionDetails(req, res, next) {
+        try {
+            const { uid, qid } = req.params;
+            
+            const submissionDetails = await Submission.find({
+                UserId: uid,
+                QuestionId: qid
+            });
+            if (!submissionDetails) {
+                return res.status(404).send("Submission not found");
+            }
+    
+            // Convert to a plain object to avoid circular structure issues
+            // const submissionDetailsObject = submissionDetails.toObject();
+    
+            res.status(200).json(submissionDetails);
+        } catch (error) {
+            next(error);
+        }
+    }
+    
+
+
 
 
 

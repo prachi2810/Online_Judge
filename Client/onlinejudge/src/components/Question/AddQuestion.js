@@ -12,7 +12,8 @@ const defaultQuestion = {
     "Level": "",
     "TestCase": [],
     "Constraints": "",
-    "Topic": ""
+    "Topic": "",
+    "Solution":""
 }
 
 
@@ -100,7 +101,7 @@ function AddQuestion() {
             setDescError('');
         }
     };
-    const handleSubmit = (e) => {
+    const handleSubmitAddQuestion = (e) => {
         e.preventDefault();
         const validationErrors = {};
         let hasErrors = false;
@@ -197,7 +198,7 @@ function AddQuestion() {
             </div>
             <div>
                 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmitAddQuestion}>
                     
                     <div className="container-fluid ">
                         <div className="row d-flex justify-content-center">
@@ -242,6 +243,10 @@ function AddQuestion() {
                                             <option key={index} value={index + 1}>{topic}</option>
                                         ))}
                                     </select>
+                                </div>
+                                <div className="mb-3">
+                                        <label for="Solution" className="form-label">Solution:</label>
+                                        <input className="form-control" onChange={(e) => { setAddQuestion({ ...addQuestion, Solution: e.target.value }); }} placeholder="Solution"/>
                                 </div>
                                 <div className="mb-3">
                                     {/* <button type="button" className="btn btn-primary" onClick={addTestcase}>Add Testcase</button> */}

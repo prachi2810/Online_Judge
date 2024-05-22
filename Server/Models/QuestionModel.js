@@ -31,6 +31,9 @@ const Question=new mongoose.Schema(
       },
       Topic:{
         type:Number
+      },
+      Solution:{
+        type:String
       }
 
     }

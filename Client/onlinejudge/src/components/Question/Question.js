@@ -493,7 +493,7 @@ function Question() {
                             <input className="form-control" type="search" onChange={(e) => { setSearch(e.target.value) }} placeholder="Search" aria-label="Search" />
                         </div>
                         <div className='col-md-1'>
-                            <button type="button" className='btn btn-primary' onClick={() => { navigate('/updateQuestion') }}>Add</button>
+                            <button type="button" className='btn btn-primary' onClick={() => { navigate('/addquestion') }}>Add</button>
                         </div>
                     
                 {/* </div>   */}

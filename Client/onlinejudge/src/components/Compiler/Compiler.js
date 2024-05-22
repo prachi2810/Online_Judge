@@ -1,6 +1,6 @@
-import { useParams } from "react-router-dom";
-import UseAxiosPrivate from "../../Hooks/useAxiosPrivate";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
+import UseAxiosPrivate from "../../Hooks/useAxiosPrivate";
 import axiosUserPrivate from '../../api/axios';
 // import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
@@ -15,6 +15,7 @@ import { faSyncAlt, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 
 
 import './Compiler.css';
+import SideNavBar from "./SideNavBar";
 
 function Compiler() {
     const [question, setQuestion] = useState({});
@@ -23,13 +24,18 @@ function Compiler() {
     const [output, setOutput] = useState('');
     const axiosPrivate = UseAxiosPrivate(axiosUserPrivate);
     const [language, setLanguage] = useState('cpp');
-    const [load,setLoad]=useState(false);
+    const [load, setLoad] = useState(false);
     const [theme, setTheme] = useState('light');
+    const [testcases, setTestcases] = useState([]);
+    const [user, setUser] = useState('');
+    const [submission, setSubmission] = useState([]);
     const levels = ['Low', 'Medium', 'High'];
 
     const editorRef = useRef(null);
 
     const { id } = useParams();
+
+    const navigate = useNavigate();
 
     const defaultCodes = {
         cpp: `#include <iostream> 
@@ -60,19 +66,24 @@ class Code
         try {
             setLoad(true);
             const response = await axiosPrivate.get(`/getquestion/${id}`);
+            console.log(response);
             setQuestion(response.data.question);
         } catch (error) {
             console.error(error);
         }
-        finally{
+        finally {
             setLoad(false);
         }
     };
 
-    const handleSubmit = async () => {
+    const handleCodeRun = async () => {
+        const outputTab = document.getElementById('output-tab');
+        if (outputTab) {
+            outputTab.click();
+        }
         try {
             const payload = {
-                language: 'cpp',
+                language,
                 code,
                 input
             };
@@ -83,10 +94,68 @@ class Code
             console.log(response);
             setOutput(response.data.output);
 
+            if (response.data.error) {
+                setOutput(`Error: ${response.data.error}`);
+            } else {
+                setOutput(response.data.output);
+            }
+
         } catch (error) {
+            const outputTab = document.getElementById('output-tab');
+            if (outputTab) {
+                outputTab.click();
+            }
+            if (error.response && error.response.data && error.response.data.error) {
+                setOutput(`Error: ${error.response.data.error} ${error.response.data.details}`);
+            } else {
+                setOutput(`Error: ${error.message}`);
+            }
             console.error(error);
         }
     };
+
+    const handleCodeSubmit = async () => {
+        try {
+            const payload = {
+                language,
+                code,
+                email: user.email
+
+            };
+            const response = await axiosPrivate.post(`/submit/${id}`, JSON.stringify(payload), {
+                headers: { 'Content-Type': 'application/json' },
+                withCredentials: true
+            });
+            console.log(response);
+            setTestcases(response.data.results);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    const handleisLoggedIn = async () => {
+        try {
+            const response = await axiosPrivate.get('/isLoggedIn', { withCredentials: true });
+            // console.log('ddd');
+            setUser(response.data);
+            // console.log("user", user);
+            // handleSubmission(user.id);
+            if (response.status == 401) {
+                navigate('/unauthorized');
+            }
+        }
+        catch (error) {
+            navigate('/unauthorized');
+        }
+    }
+    useEffect(() => {
+        handleisLoggedIn();
+        
+    }, []);
+    useEffect(()=>{
+        handleSubmission();
+    },[user])
+
 
     useEffect(() => {
         getQuestion();
@@ -154,23 +223,39 @@ class Code
         setTheme(prev => (prev === 'light' ? 'vs-dark' : 'light'));
     }
 
-    const handleReset=()=>{
+    const handleReset = () => {
         setCode(defaultCodes[language]);
+    }
+
+    const handleSubmission = async () => {
+        // console.log("ffffff",user.id);
+        try {
+            const response = await axiosPrivate.get(`/getsubmissiondetils/${user.id}/${id}`);
+            // console.log(response.data);
+            if (response.status == 404) {
+                setSubmission({ '': 'No Submission Found' });
+            }
+            setSubmission(response.data);
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 
 
 
 
     return (
-        
+        <>
+        <SideNavBar/>
         <div className="question-container">
-            { load && (
+            {load && (
                 <div class="d-flex justify-content-center flex-column align-items-center" style={{ height: '100vh' }}>
-                <div class="" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                  <span class="loader"></span>
+                    <div class="" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                        <span class="loader"></span>
+                    </div>
                 </div>
-              </div>
             )
             }
             {question &&
@@ -221,8 +306,27 @@ class Code
                                 </div>
                             </div>
                             <div className="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="solution-tab">
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/BCLfxQja9dI?si=NGClo1uPsvagM5dd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                <div className="card" style={{ width: '300px', marginTop: '20px' }}>
+                                    <iframe width="560" height="315" src="https://www.youtube.com/embed/BCLfxQja9dI?si=NGClo1uPsvagM5dd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+                                </div>
+                                {/* {question.Solution} */}
                             </div>
+                            <div className="tab-pane fade" id="submission" role="tabpanel" aria-labelledby="submission-tab">
+                                {
+                                  submission && submission.map((sub, index) => (
+                                        <div className="card" style={{display:'inline-block',flex:'no-wrap', width: '600px', marginTop: '20px' }} key={index}>
+                                            <div className="card-body">
+                                                <h5 className="card-title">Status</h5>
+                                                <p className="card-text">{sub.Status}</p>
+                                                <h5 className="card-title">Submitted At</h5>
+                                                <p className="card-text">{new Date(sub.SubmittedAt).toLocaleString()}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+
                         </div>
 
 
@@ -249,17 +353,17 @@ class Code
                                             style={{ cursor: 'pointer' }}
                                             onClick={toggleTheme}
                                         />
-                                        <FontAwesomeIcon 
-                                        icon={faCopy}
-                                        className="ms-2 text-primary"
-                                        style={{cursor:'pointer'}}
-                                        onClick={handleCopyCode}
+                                        <FontAwesomeIcon
+                                            icon={faCopy}
+                                            className="ms-2 text-primary"
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={handleCopyCode}
                                         />
-                                        <FontAwesomeIcon 
-                                        icon={faSyncAlt}
-                                        className="ms-2 text-primary"
-                                        style={{cursor:'pointer'}}
-                                        onClick={handleReset}
+                                        <FontAwesomeIcon
+                                            icon={faSyncAlt}
+                                            className="ms-2 text-primary"
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={handleReset}
                                         />
                                     </div>
                                 </div>
@@ -326,15 +430,44 @@ class Code
                             </div>
                         </div>
                         <div>
-                            <button onClick={handleSubmit} type="button" className="btn btn-primary">
+                            <button onClick={handleCodeRun} type="button" className="btn btn-primary">
                                 Run
                             </button>
 
+                            <button onClick={handleCodeSubmit} style={{ marginLeft: '10px' }} type="button" className="btn btn-primary">
+                                Submit
+                            </button>
+                            {/* <pre>{output}</pre> */}
+
+                        </div>
+                        <div>
+                            {/* {testcases.map((result, index) => (
+                                <p key={index}>{result}</p>
+                            ))} */}
+                            {testcases.map((result, index) => (
+                                <div key={index} style={{ display: 'inline-block', marginRight: '10px', width: '200px' }} className={`card col-md-4 mb-1 mt-3 ${result.success ? 'border-success' : 'border-danger'}`}>
+                                    <div className={`card-header ${result.success ? 'bg-success text-white' : 'bg-danger text-white'}`}>
+                                        {`Test case ${result.testCaseNumber} ${result.success ? 'passed' : 'failed'}`}
+                                    </div>
+                                    {/* <div className="card-body">
+                                    <h5 className="card-title">{`Input: ${result.input}`}</h5>
+                                    {result.success ? (
+                                        <p className="card-text">Output matched expected result.</p>
+                                    ) : (
+                                        <p className="card-text">
+                                            {`Expected: ${result.expected}, Got: ${result.got}`}
+                                        </p>
+                                    )}
+                                    {result.error && <p className="card-text">{`Error: ${result.error}`}</p>}
+                                </div> */}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             }
         </div>
+        </>
     );
 }
 

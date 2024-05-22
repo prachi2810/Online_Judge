@@ -1,0 +1,17 @@
+.tag1{
+    font-size:14px;
+    padding: 4px 8px;
+
+    &.Low{
+        /* background-color: #ddf9ee; */
+        color:#0a905d;
+    }
+    &.Medium{
+        /* background-color: #f2efbc; */
+        color:#FFB700;
+    }
+    &.High{
+        /* background-color: #fde7ea; */
+        color:#e77f89;
+    }
+  }

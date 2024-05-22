@@ -99,6 +99,19 @@ class QuestionsService{
 
     }
 
+    async GetSubmissionDetails(req,res,next){
+        try{
+
+            const Question=await this.repository.GetSubmissionDetails(req,res,next);
+            return Question;
+
+        }
+        catch(error){
+            next(error);
+        }
+
+    }
+
 
 
 
