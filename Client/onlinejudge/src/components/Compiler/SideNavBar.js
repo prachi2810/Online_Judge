@@ -43,8 +43,8 @@ function SideNavBar() {
 
     return (
         <div>
-            <nav className="navbar" style={{ top: '0px', marginLeft: '200px', marginTop: '-55px' }}>
-                <div className="container-fluid">
+            <nav className="navbar" style={{ top: '0px', marginLeft: '150px',width:'100px', marginTop: '-55px' }}>
+                <div className="container-fluid" style={{width:'200px'}}>
                     {/* <a className="navbar-brand" href="#">Offcanvas navbar</a> */}
                     <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                         <span className="navbar-toggler-icon"></span>

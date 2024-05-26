@@ -11,11 +11,13 @@ import Editor, { monaco } from '@monaco-editor/react';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+import { setTotalAcceptedSubmissions } from '../../Redux/Slice/authSlice';
 
 
 
 import './Compiler.css';
 import SideNavBar from "./SideNavBar";
+import { useDispatch } from "react-redux";
 
 function Compiler() {
     const [question, setQuestion] = useState({});
@@ -28,12 +30,14 @@ function Compiler() {
     const [theme, setTheme] = useState('light');
     const [testcases, setTestcases] = useState([]);
     const [user, setUser] = useState('');
-    const [submission, setSubmission] = useState([]);
+   const [submission, setSubmission] = useState([]);
     const levels = ['Low', 'Medium', 'High'];
 
     const editorRef = useRef(null);
 
     const { id } = useParams();
+
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
@@ -137,7 +141,9 @@ class Code
         try {
             const response = await axiosPrivate.get('/isLoggedIn', { withCredentials: true });
             // console.log('ddd');
+            // console.log(response.data);
             setUser(response.data);
+            handleSubmission(response.data.id);
             // console.log("user", user);
             // handleSubmission(user.id);
             if (response.status == 401) {
@@ -150,11 +156,8 @@ class Code
     }
     useEffect(() => {
         handleisLoggedIn();
-        
     }, []);
-    useEffect(()=>{
-        handleSubmission();
-    },[user])
+
 
 
     useEffect(() => {
@@ -227,14 +230,15 @@ class Code
         setCode(defaultCodes[language]);
     }
 
-    const handleSubmission = async () => {
+    const handleSubmission = async (userid) => {
         // console.log("ffffff",user.id);
         try {
-            const response = await axiosPrivate.get(`/getsubmissiondetils/${user.id}/${id}`);
-            // console.log(response.data);
+            const response = await axiosPrivate.get(`/getsubmissiondetils/${userid}/${id}`);
+            console.log(response.data);
             if (response.status == 404) {
-                setSubmission({ '': 'No Submission Found' });
+                setSubmission('No Submission Found');
             }
+
             setSubmission(response.data);
         }
         catch (error) {
@@ -244,212 +248,212 @@ class Code
 
 
 
-
     return (
         <>
-        <SideNavBar/>
-        <div className="question-container">
-            {load && (
-                <div class="d-flex justify-content-center flex-column align-items-center" style={{ height: '100vh' }}>
-                    <div class="" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                        <span class="loader"></span>
+            <SideNavBar />
+            <div className="question-container">
+                {load && (
+                    <div class="d-flex justify-content-center flex-column align-items-center" style={{ height: '100vh' }}>
+                        <div class="" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                            <span class="loader"></span>
+                        </div>
                     </div>
-                </div>
-            )
-            }
-            {question &&
-                <div className="row">
-                    <div className="col-md-6">
-                        <ul className="nav nav-tabs mt-3" id="myTabs" role="tablists">
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Description</button>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link" id="solution-tab" data-bs-toggle="tab" data-bs-target="#solution" type="button" role="tab" aria-controls="solution" aria-selected="false">Solution</button>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link" id="submission-tab" data-bs-toggle="tab" data-bs-target="#submission" type="button" role="tab" aria-controls="submission" aria-selected="false">Submission</button>
-                            </li>
-                        </ul>
-                        <div className="tab-content" id="myTabContent">
-                            <div className="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-                                <div className="question-header">
-                                    <h5 style={{ marginTop: '20px' }}>{question.Title}</h5>
-                                    <p className="level" style={{ color: question.Level === 1 ? 'green' : question.Level === 2 ? '#EF9819' : question.Level === 3 ? 'red' : 'black' }}>{levels[question.Level - 1]}</p>
-                                </div>
-                                <hr />
-                                <div className="question-description">
-                                    <p>{question.Description}</p>
-                                </div>
-                                {question.TestCase && question.TestCase.map((test, index) => (
-                                    <div key={index} className="test-case">
-                                        <h6>Example Test Case {index + 1}:</h6>
-                                        <div className="test-input">
-                                            <p><strong>Input:</strong> {test.Input}
-                                                <FontAwesomeIcon
-                                                    icon={faCopy}
-                                                    className="ms-2"
-                                                    style={{ cursor: 'pointer', marginBottom: '7px' }}
-                                                    onClick={() => handleCopy(test.Input)}
-                                                />
-                                            </p>
-                                        </div>
-                                        <div className="test-output">
-                                            <p><strong>Output:</strong> {test.Output}</p>
-                                        </div>
+                )
+                }
+                {question &&
+                    <div className="row">
+                        <div className="col-md-6">
+                            <ul className="nav nav-tabs mt-3" id="myTabs" role="tablists">
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Description</button>
+                                </li>
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link" id="solution-tab" data-bs-toggle="tab" data-bs-target="#solution" type="button" role="tab" aria-controls="solution" aria-selected="false">Solution</button>
+                                </li>
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link" id="submission-tab" data-bs-toggle="tab" data-bs-target="#submission" type="button" role="tab" aria-controls="submission" aria-selected="false">Submission</button>
+                                </li>
+                            </ul>
+                            <div className="tab-content" id="myTabContent">
+                                <div className="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                                    <div className="question-header">
+                                        <h5 style={{ marginTop: '20px' }}>{question.Title}</h5>
+                                        <p className="level" style={{ color: question.Level === 1 ? 'green' : question.Level === 2 ? '#EF9819' : question.Level === 3 ? 'red' : 'black' }}>{levels[question.Level - 1]}</p>
                                     </div>
-                                ))}
-                                <div className="question-constraints">
-                                    <h4>Constraints:</h4>
-                                    <p>{question.Constraints}</p>
-                                </div>
-                            </div>
-                            <div className="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="solution-tab">
-                                <div className="card" style={{ width: '300px', marginTop: '20px' }}>
-                                    <iframe width="560" height="315" src="https://www.youtube.com/embed/BCLfxQja9dI?si=NGClo1uPsvagM5dd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-                                </div>
-                                {/* {question.Solution} */}
-                            </div>
-                            <div className="tab-pane fade" id="submission" role="tabpanel" aria-labelledby="submission-tab">
-                                {
-                                  submission && submission.map((sub, index) => (
-                                        <div className="card" style={{display:'inline-block',flex:'no-wrap', width: '600px', marginTop: '20px' }} key={index}>
-                                            <div className="card-body">
-                                                <h5 className="card-title">Status</h5>
-                                                <p className="card-text">{sub.Status}</p>
-                                                <h5 className="card-title">Submitted At</h5>
-                                                <p className="card-text">{new Date(sub.SubmittedAt).toLocaleString()}</p>
+                                    <hr />
+                                    <div className="question-description">
+                                        <p>{question.Description}</p>
+                                    </div>
+                                    {question.TestCase && question.TestCase.slice(0, 2).map((test, index) => (
+                                        <div key={index} className="test-case">
+                                            <h6>Example Test Case {index + 1}:</h6>
+                                            <div className="test-input">
+                                                <p><strong>Input:</strong> {test.Input}
+                                                    <FontAwesomeIcon
+                                                        icon={faCopy}
+                                                        className="ms-2"
+                                                        style={{ cursor: 'pointer', marginBottom: '7px' }}
+                                                        onClick={() => handleCopy(test.Input)}
+                                                    />
+                                                </p>
+                                            </div>
+                                            <div className="test-output">
+                                                <p><strong>Output:</strong> {test.Output}</p>
                                             </div>
                                         </div>
-                                    ))
-                                }
+                                    ))}
+                                    <div className="question-constraints">
+                                        <h4>Constraints:</h4>
+                                        <p>{question.Constraints}</p>
+                                    </div>
+                                </div>
+                                <div className="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="solution-tab">
+                                    <div className="card" style={{ width: '300px', marginTop: '20px' }}>
+                                        {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/BCLfxQja9dI?si=NGClo1uPsvagM5dd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> */}
+                                        {/* {question.Solution} */}
+                                        <div dangerouslySetInnerHTML={{ __html: question.Solution }} />
+                                    </div>
+                                    {/* {question.Solution} */}
+                                </div>
+                                <div className="tab-pane fade" id="submission" role="tabpanel" aria-labelledby="submission-tab">
+                                    {
+                                        submission && submission.map((sub, index) => (
+                                            <div className="card" style={{ display: 'inline-block', flex: 'no-wrap', width: '600px', marginTop: '20px' }} key={index}>
+                                                <div className="card-body">
+                                                    <h5 className="card-title">Status</h5>
+                                                    <p className="card-text">{sub.Status}</p>
+                                                    <h5 className="card-title">Submitted At</h5>
+                                                    <p className="card-text">{new Date(sub.SubmittedAt).toLocaleString()}</p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+
                             </div>
 
+
                         </div>
-
-
-                    </div>
-                    <div className="col-md-6">
-                        <div>
-                            <div className="col-md-12">
-                                <div className="d-flex align-items-center justify-content-between">
-                                    <div className="d-flex align-items-center">
-                                        <p className="me-2 mb-2">Languages:</p>
-                                        <div className='col-md-5 mb-2'>
-                                            <select className="form-select" aria-label="Default select example" onChange={(e) => setLanguage(e.target.value)}>
-                                                <option value="cpp">CPP</option>
-                                                <option value="java">JAVA</option>
-                                                <option value="python">Python</option>
-                                                <option value="javascript">JavaScript</option>
-                                            </select>
+                        <div className="col-md-6">
+                            <div>
+                                <div className="col-md-12">
+                                    <div className="d-flex align-items-center justify-content-between">
+                                        <div className="d-flex align-items-center">
+                                            <p className="me-2 mb-2">Languages:</p>
+                                            <div className='col-md-5 mb-2'>
+                                                <select className="form-select" aria-label="Default select example" onChange={(e) => setLanguage(e.target.value)}>
+                                                    <option value="cpp">CPP</option>
+                                                    <option value="java">JAVA</option>
+                                                    <option value="python">Python</option>
+                                                    <option value="javascript">JavaScript</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon
+                                                icon={theme === 'light' ? faMoon : faSun}
+                                                className="ms-2 text-primary"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={toggleTheme}
+                                            />
+                                            <FontAwesomeIcon
+                                                icon={faCopy}
+                                                className="ms-2 text-primary"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={handleCopyCode}
+                                            />
+                                            <FontAwesomeIcon
+                                                icon={faSyncAlt}
+                                                className="ms-2 text-primary"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={handleReset}
+                                            />
                                         </div>
                                     </div>
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon
-                                            icon={theme === 'light' ? faMoon : faSun}
-                                            className="ms-2 text-primary"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={toggleTheme}
-                                        />
-                                        <FontAwesomeIcon
-                                            icon={faCopy}
-                                            className="ms-2 text-primary"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={handleCopyCode}
-                                        />
-                                        <FontAwesomeIcon
-                                            icon={faSyncAlt}
-                                            className="ms-2 text-primary"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={handleReset}
-                                        />
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <Editor
-                                height="50vh"
-                                theme={theme}
-                                defaultLanguage="cpp"
-                                value={code}
-                                onMount={handleEditorDidMount}
-                                onChange={(value) => setCode(value)}
+                            <div>
+                                <Editor
+                                    height="50vh"
+                                    theme={theme}
+                                    defaultLanguage="cpp"
+                                    value={code}
+                                    onMount={handleEditorDidMount}
+                                    onChange={(value) => setCode(value)}
 
-                            />
-                        </div>
-                        <ul className="nav nav-tabs mt-3" id="myTab" role="tablist">
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link active" id="input-tab" data-bs-toggle="tab" data-bs-target="#input" type="button" role="tab" aria-controls="input" aria-selected="true">Input</button>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <button className="nav-link" id="output-tab" data-bs-toggle="tab" data-bs-target="#output" type="button" role="tab" aria-controls="output" aria-selected="false">Output</button>
-                            </li>
-                        </ul>
-                        <div>
-                            <div className="tab-content" id="myTabContent">
-                                <div className="tab-pane fade show active" id="input" role="tabpanel" aria-labelledby="input-tab">
-                                    <textarea
-                                        rows='5'
-                                        cols='15'
-                                        value={input}
-                                        placeholder='Input'
-                                        onChange={(e) => setInput(e.target.value)}
-                                        className="border border-gray-300 rounded-sm py-1.5 px-4 mb-1 focus:outline-none focus:border-indigo-500 resize-none w-full"
-                                        style={{
-                                            fontFamily: '"Fira code", "Fira Mono", monospace',
-                                            fontSize: 12,
-                                            minHeight: '100px', width: '650px', marginTop: '20px'
-                                        }}
-                                    ></textarea>
-                                </div>
-                                <div className="tab-pane fade" id="output" role="tabpanel" aria-labelledby="output-tab">
-                                    {(
-
+                                />
+                            </div>
+                            <ul className="nav nav-tabs mt-3" id="myTab" role="tablist">
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link active" id="input-tab" data-bs-toggle="tab" data-bs-target="#input" type="button" role="tab" aria-controls="input" aria-selected="true">Input</button>
+                                </li>
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link" id="output-tab" data-bs-toggle="tab" data-bs-target="#output" type="button" role="tab" aria-controls="output" aria-selected="false">Output</button>
+                                </li>
+                            </ul>
+                            <div>
+                                <div className="tab-content" id="myTabContent">
+                                    <div className="tab-pane fade show active" id="input" role="tabpanel" aria-labelledby="input-tab">
                                         <textarea
-                                            className="border border-gray-300 rounded-sm py-1.5 px-4 mb-1 focus:outline-none focus:border-indigo-500 resize-none w-full"
                                             rows='5'
                                             cols='15'
-                                            value={output}
-                                            placeholder='Output'
+                                            value={input}
+                                            placeholder='Input'
+                                            onChange={(e) => setInput(e.target.value)}
+                                            className="border border-gray-300 rounded-sm py-1.5 px-4 mb-1 focus:outline-none focus:border-indigo-500 resize-none w-full"
                                             style={{
                                                 fontFamily: '"Fira code", "Fira Mono", monospace',
                                                 fontSize: 12,
-                                                minHeight: '100px',
-                                                width: '650px',
-                                                marginTop: '20px'
+                                                minHeight: '100px', width: '650px', marginTop: '20px'
                                             }}
-                                        >
-                                            {output}
-                                        </textarea>
-                                    )}
+                                        ></textarea>
+                                    </div>
+                                    <div className="tab-pane fade" id="output" role="tabpanel" aria-labelledby="output-tab">
+                                        {(
 
+                                            <textarea
+                                                className="border border-gray-300 rounded-sm py-1.5 px-4 mb-1 focus:outline-none focus:border-indigo-500 resize-none w-full"
+                                                rows='5'
+                                                cols='15'
+                                                value={output}
+                                                placeholder='Output'
+                                                style={{
+                                                    fontFamily: '"Fira code", "Fira Mono", monospace',
+                                                    fontSize: 12,
+                                                    minHeight: '100px',
+                                                    width: '650px',
+                                                    marginTop: '20px'
+                                                }}
+                                            >
+                                                {output}
+                                            </textarea>
+                                        )}
+
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <button onClick={handleCodeRun} type="button" className="btn btn-primary">
-                                Run
-                            </button>
+                            <div>
+                                <button onClick={handleCodeRun} type="button" className="btn btn-primary">
+                                    Run
+                                </button>
 
-                            <button onClick={handleCodeSubmit} style={{ marginLeft: '10px' }} type="button" className="btn btn-primary">
-                                Submit
-                            </button>
-                            {/* <pre>{output}</pre> */}
+                                <button onClick={handleCodeSubmit} style={{ marginLeft: '10px' }} type="button" className="btn btn-primary">
+                                    Submit
+                                </button>
+                                {/* <pre>{output}</pre> */}
 
-                        </div>
-                        <div>
-                            {/* {testcases.map((result, index) => (
+                            </div>
+                            <div>
+                                {/* {testcases.map((result, index) => (
                                 <p key={index}>{result}</p>
                             ))} */}
-                            {testcases.map((result, index) => (
-                                <div key={index} style={{ display: 'inline-block', marginRight: '10px', width: '200px' }} className={`card col-md-4 mb-1 mt-3 ${result.success ? 'border-success' : 'border-danger'}`}>
-                                    <div className={`card-header ${result.success ? 'bg-success text-white' : 'bg-danger text-white'}`}>
-                                        {`Test case ${result.testCaseNumber} ${result.success ? 'passed' : 'failed'}`}
-                                    </div>
-                                    {/* <div className="card-body">
+                                {testcases.map((result, index) => (
+                                    <div key={index} style={{ display: 'inline-block', marginRight: '10px', width: '200px' }} className={`card col-md-4 mb-1 mt-3 ${result.success ? 'border-success' : 'border-danger'}`}>
+                                        <div className={`card-header ${result.success ? 'bg-success text-white' : 'bg-danger text-white'}`}>
+                                            {`Test case ${result.testCaseNumber} ${result.success ? 'passed' : 'failed'}`}
+                                        </div>
+                                        {/* <div className="card-body">
                                     <h5 className="card-title">{`Input: ${result.input}`}</h5>
                                     {result.success ? (
                                         <p className="card-text">Output matched expected result.</p>
@@ -460,13 +464,13 @@ class Code
                                     )}
                                     {result.error && <p className="card-text">{`Error: ${result.error}`}</p>}
                                 </div> */}
-                                </div>
-                            ))}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
         </>
     );
 }

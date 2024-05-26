@@ -248,7 +248,23 @@ class QuestionsRepository {
             next(error);
         }
     }
-    
+
+    async GetSubmissionDetailsByQuestion(req, res, next) {
+        const { questionId } = req.params;
+        console.log(questionId);
+        try{
+
+            const submissions = await Submission.find({ QuestionId:questionId });
+        // if (!submissions.length) {
+        //     return res.status(404).send('No submissions found!');
+        // }
+        res.status(200).json(submissions);
+        }   
+        catch(error){
+            next(error);
+        }
+
+    }
 
 
 

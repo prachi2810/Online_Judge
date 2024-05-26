@@ -162,7 +162,7 @@ class LoginRepository {
             const EnteredPassword = await bcrypt.compare(UserInputs.password,userdata.password);
             console.log(EnteredPassword);
             if(EnteredPassword){
-                res.status(201).json({message:"Password is same as previous!"});
+                res.status(400).json({message:"Password is same as previous!"});
             }
 
             const hashPassword = await bcrypt.hash(UserInputs.password, 10);

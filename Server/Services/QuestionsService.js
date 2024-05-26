@@ -112,6 +112,19 @@ class QuestionsService{
 
     }
 
+    async GetSubmissionDetailsByQuestion(req, res, next) {
+        try{
+
+            const Question=await this.repository.GetSubmissionDetailsByQuestion(req,res,next);
+            return Question;
+
+        }
+        catch(error){
+            next(error);
+        }
+
+    }
+
 
 
 

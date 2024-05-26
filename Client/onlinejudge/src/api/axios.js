@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useAuth } from '../context/AuthProvider';
-import Cookies from "js-cookie";
 
 export default axios.create({
     baseURL: 'http://localhost:5137/api'

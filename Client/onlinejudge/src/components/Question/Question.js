@@ -1,14 +1,19 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './Question.css';
 import axiosUserPrivate from '../../api/axios';
-import useAuth from '../../Hooks/useData';
+import useData from '../../Hooks/useData';
 import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faFile } from '@fortawesome/free-solid-svg-icons'
+import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
+import tippy from 'tippy.js';
+import Tippy from '@tippyjs/react';
+import { useSelector } from 'react-redux';
 
 
 const levelMap = {
@@ -31,11 +36,17 @@ const defaultQuestion = {
         { "Input": "", "Output": "" }
     ],
     "Constraints": "",
-    "Topic": ""
+    "Topic": "",
+    "Solution": ""
 }
+const extractSrc = (iframeString) => {
+    if (!iframeString) return '';
+    const srcMatch = iframeString.match(/src\s*=\s*"([^"]+)"/);
+    return srcMatch ? srcMatch[1] : '';
+  };
 
-function Question() {
-    const { token } = useAuth();
+function Question({ roles }) {
+    const { token } = useData();
     const [questions, setQuestions] = useState([]);
     const axiosPrivate = useAxiosPrivate(axiosUserPrivate);
     const [modalOpen, setModalOpen] = useState(false);
@@ -50,26 +61,48 @@ function Question() {
     const [load, setLoad] = useState(false);
     const [errors, setErrors] = useState({});
     const [formError, setFormError] = useState('');
+    const [submissionCount, setSubmissionCount] = useState({});
     const levels = ['Low', 'Medium', 'High'];
     const topics = ['Basic Beginner', 'Array', 'Strings'];
 
+    const totalAcceptedSubmissions = useSelector((state) => state.submissions.totalAcceptedSubmissions);
+
+
+    const tooltipRef = useRef();
+
+    useEffect(() => {
+        tippy(tooltipRef.current, {
+            content: 'Tooltip content', // This is the text shown in the tooltip
+        });
+    }, []);
+
+
+   
+    //   const solutionUrl = ;
+
+    useEffect(() => {
+        console.log("Role in Question component:", roles);
+        // Fetch questions based on role or other conditions here
+    }, [roles]);
 
     const navigate = useNavigate();
-    const notifyUpdateQue = () => toast.success("Question Updated!");
 
     const getAllQuestion = async () => {
         try {
             setLoad(true);
             const response = await axiosPrivate.get('/getallquestion');
+            
             setQuestions(response.data.questions);
+
 
         }
         catch (error) {
-
+            toast.error("Failed to load question details");
             console.log("error", error);
         }
         finally {
             setLoad(false);
+
         }
     }
 
@@ -80,7 +113,7 @@ function Question() {
             setUpdateQuestion(response.data.question);
         }
         catch (error) {
-
+            toast.error("Failed to load question details");
         }
     }
 
@@ -109,12 +142,13 @@ function Question() {
                 })
             console.log(response);
             if (response.status == 201) {
+                toast.success("Question Updated successfully!");
                 setModalOpen(false);
                 getAllQuestion();
             }
         }
         catch (error) {
-
+            toast.error("Failed to update question details");
         }
     }
 
@@ -126,11 +160,12 @@ function Question() {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 })
+            toast.success("Question Deleted successfully!");
             getAllQuestion();
             setDeleteQue(false);
         }
         catch (error) {
-
+            toast.error("Failed to delete question");
         }
 
 
@@ -199,26 +234,28 @@ function Question() {
         }
     }, [updateId]);
 
+
+
     const confirmDelete = (id) => {
         setDeleteQue(true);
         setDeleteId(id);
-    
+
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const validationErrors = {};
         let hasErrors = false;
-         
+
         //  console.log("ee",updateQuestion.Title=='');
         // Title validation
-        if (!updateQuestion.Title ||updateQuestion.Title.trim() === '') {
+        if (!updateQuestion.Title || updateQuestion.Title.trim() === '') {
             validationErrors.Title = 'Title is required';
             hasErrors = true;
         }
 
         // Description validation
-        if (updateQuestion.Description.trim() ==='') {
+        if (updateQuestion.Description.trim() === '') {
             validationErrors.Description = 'Description is required';
             hasErrors = true;
         }
@@ -236,7 +273,7 @@ function Question() {
         }
 
         // TestCase validation
-        
+
 
         // Constraints validation
         if (updateQuestion.Constraints.trim() === '') {
@@ -245,14 +282,14 @@ function Question() {
         }
 
         setErrors(validationErrors);
-        
+
         if (hasErrors) {
             setFormError('Please fill out all required fields');
             return;
         }
-        if(hasErrors==false){
-        updateQuestions();
-        return;
+        if (hasErrors == false) {
+            updateQuestions();
+            return;
         }
 
         // Proceed with form submission
@@ -269,24 +306,78 @@ function Question() {
         e.preventDefault();
         const validationErrors = {};
         let hasErrors = false;
-        console.log("modal",updateQuestion.TestCase);
+        console.log("modal", updateQuestion.TestCase);
         if (updateQuestion.TestCase.some(testCase => testCase.Input.trim() == '' || testCase.Output.trim() == '')) {
             validationErrors.TestCase = 'All test cases must have both Input and Output values';
             hasErrors = true;
         }
-        if(hasErrors==false){
-        const { Input, Output } = updateQuestion;
-        const newTestCase = { Input, Output };
-        setUpdateQuestion(prevState => ({
-            ...prevState,
-            TestCase: [...prevState.TestCase, newTestCase]
-        }));
-        setModalOpen2(false);
-    }
+        if (hasErrors == false) {
+            const { Input, Output } = updateQuestion;
+            const newTestCase = { Input, Output };
+            setUpdateQuestion(prevState => ({
+                ...prevState,
+                TestCase: [...prevState.TestCase, newTestCase]
+            }));
+            setModalOpen2(false);
+            toast.success("Test Case Added!");
+        }
     };
+
+    // useEffect(()=>{
+    //     console.log("role",token.role);
+    // },[])
+
+    const handleSubmissionCount = async (questionId) => {
+        try {
+            // Fetch all submissions for the specific question
+            const response = await axiosPrivate.get(`/getsubmissiondetils/${questionId}`);
+            console.log(response.data);
+
+            if (response.status === 404 || !response.data.length) {
+                setSubmissionCount(prevState => ({
+                    ...prevState,
+                    [questionId]: 0
+                }));
+                return;
+            }
+
+            const uniqueAcceptedUsers = new Set();
+
+            response.data.forEach((sub) => {
+                if (sub.Status === 'Accepted') {
+                    uniqueAcceptedUsers.add(sub.UserId);
+                }
+            });
+
+            const totalAcceptedSubmissions = uniqueAcceptedUsers.size;
+            setSubmissionCount(prevState => ({
+                ...prevState,
+                [questionId]: totalAcceptedSubmissions
+            }));
+        } catch (error) {
+            // console.log(error);
+            setSubmissionCount(prevState => ({
+                ...prevState,
+                [questionId]: 0
+            }));
+        }
+    };
+
+    useEffect(() => {
+        if (questions) {
+            questions.forEach(question => {
+                handleSubmissionCount(question._id);
+            });
+        }
+    }, [questions]);
+
+    // useEffect(() => {
+        
+    // }, [id])
 
     return (
         <>
+         {/* <h3>Total Accepted Submissions: {totalAcceptedSubmissions}</h3> */}
             {load && (
                 <div class="d-flex justify-content-center flex-column align-items-center" style={{ height: '100vh' }}>
                     <div class="" role="status">
@@ -367,11 +458,12 @@ function Question() {
                                     <div class="modal-body">
                                         <form onSubmit={handleSubmit}>
                                             <div class="mb-3">
+                                            
                                                 <input type="text" className={`form-control ${errors.Title ? 'is-invalid' : ''}`} value={updateQuestion?.Title || ''} onChange={(e) => { setUpdateQuestion({ ...updateQuestion, Title: e.target.value }) }} placeholder='Title' id="Title" />
                                             </div>
                                             <div class="mb-3">
 
-                                                <textarea className={`form-control ${errors.Description ? 'is-invalid' : ''}`}placeholder='Description' value={updateQuestion?.Description || ''} onChange={(e) => { setUpdateQuestion({ ...updateQuestion, Description: e.target.value }) }} id="Description"></textarea>
+                                                <textarea className={`form-control ${errors.Description ? 'is-invalid' : ''}`} placeholder='Description' value={updateQuestion?.Description || ''} onChange={(e) => { setUpdateQuestion({ ...updateQuestion, Description: e.target.value }) }} id="Description"></textarea>
 
                                             </div>
                                             <div className="mb-3">
@@ -443,16 +535,23 @@ function Question() {
                                                         </div>
                                                     ))
                                                 }
-                                                <button className='btn btn-primary' onClick={()=>{setModalOpen2(true); setModalOpen(true)}}>Add</button>
+                                                <Tippy content='Add Testcase'>
+                                                    
+                                                <button style={{marginLeft:'90%',fontSize:'10px'}} type='button' className='btn btn-primary' onClick={() => { setModalOpen2(true); setModalOpen(true) }}><FontAwesomeIcon icon={faAdd}/></button>
+                                                </Tippy>
                                             </div>
                                             <div className='mb-3'>
                                                 <textarea type="text" className="form-control" placeholder='Constraints' value={updateQuestion.Constraints} onChange={(e) => { setUpdateQuestion({ ...updateQuestion, Constraints: e.target.value }) }} id="Constraints" />
+                                            </div>
+                                            <div className='mb-3'>
+
+                                                <textarea type="text" className="form-control" placeholder='Solution' value={updateQuestion.Solution} onChange={(e) => { setUpdateQuestion({ ...updateQuestion, Solution: e.target.value }) }} id="Solution" />
                                             </div>
                                             <div className="modal-footer">
                                                 <button type="button" className="btn btn-secondary" onClick={() => { setModalOpen(false) }}>Close</button>
                                                 <button type="submit" className="btn btn-primary">Update</button>
                                             </div>
-                                            <ToastContainer />
+                                            {/* <ToastContainer /> */}
                                             {/* <div class="modal-footer">
                                                 <button type="button" className="btn btn-secondary" onClick={() => { setModalOpen(false) }}>Close</button>
                                                
@@ -490,56 +589,75 @@ function Question() {
                             </select>
                         </div>
                         <div className='col-md-7'>
-                            <input className="form-control" type="search" onChange={(e) => { setSearch(e.target.value) }} placeholder="Search" aria-label="Search" />
+                            <input className="form-control" type="search" onChange={(e) => { setSearch(e.target.value) }} placeholder="Search By Title" aria-label="Search" />
                         </div>
+                        {roles==='admin' && (
                         <div className='col-md-1'>
                             <button type="button" className='btn btn-primary' onClick={() => { navigate('/addquestion') }}>Add</button>
                         </div>
-                    
-                {/* </div>   */}
+                        )}
+
+                        {/* </div>   */}
 
 
-               <div className='table-responsive mt-3 col-md-12'>
-                
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Title</th>
-                            <th scope="col">Topic</th>
-                            <th scope="col">Level</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {questions && questions.map((ques, index) => (
-                            <tr key={index} className='rows'>
-                                <th scope="row" style={{ cursor: "pointer", textDecoration: "none" }} onMouseEnter={(e) => { e.target.style.textDecoration = "underline" }} onMouseLeave={(e) => { e.target.style.textDecoration = "none" }} onClick={() => { gotoQuestion(ques._id) }}>{ques.Title}</th>
-                                <td>{TopicMap[ques.Topic]}</td>
-                                <td><span className={`tag ${levelMap[ques.Level]}`}>{levelMap[ques.Level]}</span></td>
-                                <td>
-                                    <button className='btn btn-primary me-2' data-bs-toggle="tooltip" data-bs-placement="top"
-                                        data-bs-custom-class="custom-tooltip"
-                                        data-bs-title="This top tooltip is themed via CSS variables."
-                                        onClick={() => {
-                                            setUpdateId(ques._id); 
-                                            setModalOpen(true); 
-                                            console.log("ff", updateId);
+                        <div className='table-responsive mt-3 col-md-12'>
 
-                                        }}><FontAwesomeIcon icon={faPenToSquare} /></button>
-                                    <button className='btn btn-primary' onClick={() => { confirmDelete(ques._id) }} data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Question">
-                                        <FontAwesomeIcon icon={faTrash} />
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Title</th>
+                                        <th scope="col">Topic</th>
+                                        <th scope="col">Level</th>
+                                        
+                                        <th>Solution</th>
+                                        <th>Total Submission</th>
+                                        {roles === 'admin' && (
+                                            <th scope="col">Action</th>
+                                        )}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {questions && questions.map((ques, index) => (
+                                        <tr key={index} className='rows'>
+                                            <th scope="row" style={{ cursor: "pointer", textDecoration: "none" }} onMouseEnter={(e) => { e.target.style.textDecoration = "underline" }} onMouseLeave={(e) => { e.target.style.textDecoration = "none" }} onClick={() => { gotoQuestion(ques._id) }}>{ques.Title}</th>
+                                            <td>{TopicMap[ques.Topic]}</td>
+                                            <td><span className={`tag ${levelMap[ques.Level]}`}>{levelMap[ques.Level]}</span></td>
+                                            
+                                            <td style={{ cursor: 'pointer' }}>
+                                                <a href={extractSrc(ques.Solution)} target="_blank" rel="noopener noreferrer">
+                                                    <FontAwesomeIcon icon={faFile} />
+                                                </a>
+                                            </td>
+                                            <td>{submissionCount[ques._id] !== undefined ? submissionCount[ques._id] : 'Loading...'}</td>
+                                            {roles === 'admin' && (
+                                                <td>
+                                                    <Tippy content="Edit">
+                                                    <button className='me-2'
+                                                        style={{border:0,backgroundColor:'transparent'}}
+                                                        onClick={() => {
+                                                            setUpdateId(ques._id);
+                                                            setModalOpen(true);
+                                                            // console.log("ff", updateId);
 
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                                                        }}><FontAwesomeIcon ref={tooltipRef} icon={faPenToSquare} /></button>
+                                                        </Tippy>
+                                                        <Tippy content="Delete">
+                                                    <button className='' style={{border:0,backgroundColor:'transparent'}} onClick={() => { confirmDelete(ques._id) }} data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Question">
+                                                        <FontAwesomeIcon icon={faTrash} />
 
-                    </tbody>
-                </table>
+                                                    </button>
+                                                    </Tippy>
+                                                </td>
+                                            )}
+                                        </tr>
+                                    ))}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                </div>
-            </div>
-        </div >
+            </div >
         </>
     )
 

@@ -101,4 +101,16 @@ const GetSubmissionDetails=async(req,res,next)=>{
     }
 }
 
-module.exports={AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion,CompilerFile,SubmitCode,GetSubmissionDetails};
+const GetSubmissionDetailsByQuestion=async(req,res,next)=>{
+    try{
+         const Question=await service.GetSubmissionDetailsByQuestion(req,res,next);
+
+         return Question;
+    }
+    catch(error)
+    {
+       next(error);
+    }
+}
+
+module.exports={AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion,CompilerFile,SubmitCode,GetSubmissionDetails,GetSubmissionDetailsByQuestion};

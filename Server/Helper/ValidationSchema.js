@@ -1,9 +1,16 @@
-const Joi = require('joi')
+const Joi = require('joi');
 
 
 const AuthLoginSchema=Joi.object({
     email:Joi.string().email().lowercase().required(),
-    password:Joi.string().min(8).regex(/^[a-zA-Z0-9]{3,30}$/).required(),
+    password:Joi.string()
+    .min(8)
+    .max(30)
+    .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,30}$/)
+    .required()
+    .messages({
+        'string.pattern.base': 'Invalid Password',
+    })
 })
 
 const AuthRegisterSchema = Joi.object({

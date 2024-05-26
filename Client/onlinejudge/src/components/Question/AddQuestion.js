@@ -33,8 +33,6 @@ function AddQuestion() {
 
     const navigate = useNavigate();
 
-    const notifyTestCaseAdd = () => toast.success("Tescase Added!");
-    const notifyQuestionAdd = () => toast.success("Question Added!");
 
     const addquestion = async (e) => {
         // e.preventDefault();
@@ -46,7 +44,7 @@ function AddQuestion() {
                 });
             console.log(response);
             if (response.status == 201) {
-                notifyQuestionAdd();
+                toast.success("Question Added successfully!");
                 navigate('/allquestions');
             }
         }
@@ -79,7 +77,7 @@ function AddQuestion() {
             ...prevState,
             TestCase: [...prevState.TestCase, newTestCase]
         }));
-        notifyTestCaseAdd();
+        toast.success("Test case added successfully!");
         setOpenModal(false);
     }
     };

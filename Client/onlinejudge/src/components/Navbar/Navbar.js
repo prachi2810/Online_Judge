@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 
 
-function Navbar() {
+function Navbar({setRole}) {
 
     const navigate = useNavigate();
     const { token, setToken } = useData();
@@ -27,7 +27,8 @@ function Navbar() {
         try {
             const response = await axios.get('/isLoggedIn', { withCredentials: true });
             console.log('ddd');
-            console.log(response);
+            console.log("role1",response.data.role);
+            setRole(response.data.role);
             if (response.status == 401) {
                 navigate('/unauthorized');
             }
@@ -44,7 +45,7 @@ function Navbar() {
         <>
             <div className="Nav">
                 <nav className="navbar navbar-expand-lg navcolor">
-                    <div class="container-fluid">
+                    <div class="container-fluid" >
                         <a class="navbar-brand" onClick={() => { navigate('/allquestions') }}>Online_Judge</a>
                         {/* <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>

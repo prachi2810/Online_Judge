@@ -1,17 +1,17 @@
-// import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-// export const authSlice = createSlice({
-//     name: 'auth',
-//     initialState: {
-//         token: null,
-//     },
-//     reducers: {
-//         setToken: (state, action) => {
-//             state.token = action.payload;
-//         },
-//     },
-// });
+export const submissionsSlice = createSlice({
+    name: 'submissions',
+    initialState: {
+        totalAcceptedSubmissions: 0,
+    },
+    reducers: {
+        setTotalAcceptedSubmissions: (state, action) => {
+            state.totalAcceptedSubmissions = action.payload;
+        },
+    },
+});
 
-// export const { setToken } = authSlice.actions;
+export const { setTotalAcceptedSubmissions } = submissionsSlice.actions;
 
-// export default authSlice.reducer;
+export default submissionsSlice.reducer;
