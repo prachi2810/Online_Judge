@@ -1,0 +1,22 @@
+/* Dashboard.css */
+.chart-container {
+    position: relative;
+    width: 45%;
+    height: 400px; /* Set a fixed height */
+    margin: 20px 0px 0px 20px; /* Adjust as needed for spacing */
+    display: inline-block;
+  }
+
+  /* .chart-container {
+    margin: 20px 0;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  } */
+  
+  .dashboard {
+    padding: 20px;
+  }
+  
+  

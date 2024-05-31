@@ -1,24 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
 import useData from "../../Hooks/useData";
-import { useEffect } from "react";
+import { useEffect, useState } from "react"; // Import useState
 
-
-
-function Navbar({setRole}) {
-
+function Navbar({ setRole,role }) {
     const navigate = useNavigate();
     const { token, setToken } = useData();
+    const [userName, setUserName] = useState(''); // Initialize userName state with useState
+
     const handleLogout = async () => {
         try {
             const response = await axios.delete('/logout', { withCredentials: true });
             setToken({});
-            if (response.status == 200) {
+            if (response.status === 200) {
                 navigate('/');
             }
             console.log(response);
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
         }
     }
@@ -27,16 +25,17 @@ function Navbar({setRole}) {
         try {
             const response = await axios.get('/isLoggedIn', { withCredentials: true });
             console.log('ddd');
-            console.log("role1",response.data.role);
             setRole(response.data.role);
-            if (response.status == 401) {
+            setUserName(response.data.email); // Set userName state
+            console.log("uuuu", userName);
+            if (response.status === 401) {
                 navigate('/unauthorized');
             }
-        }
-        catch (error) {
-            navigate('/unauthorized');
+        } catch (error) {
+            // Handle error
         }
     }
+
     useEffect(() => {
         handleisLoggedIn();
     }, [])
@@ -45,53 +44,25 @@ function Navbar({setRole}) {
         <>
             <div className="Nav">
                 <nav className="navbar navbar-expand-lg navcolor">
-                    <div class="container-fluid" >
-                        <a class="navbar-brand" onClick={() => { navigate('/allquestions') }}>Online_Judge</a>
-                        {/* <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button> */}
-                        {/* <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Dropdown
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Action</a></li>
-                                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div> */}
-                        <form class="d-flex justify-content-start" role="search">
-                            {/* <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                            <button class="btn btn-outline-success" type="submit">Search</button> */}
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item dropdown">
-                                    <a className="nav-link dropdown-toggle username" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        P
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" onClick={handleLogout}>Logout</a></li>
-                                       
-                                    </ul>
-                                </li>
-                            </ul>
-                        </form>
-                        {/* <div className="collapse navbar-collapse" id="navbarNav">
-                            <ul className="navbar-nav ms-auto">
+                    <div className="container-fluid">
+                        <a className="navbar-brand" onClick={() => { navigate('/allquestions') }}>Online_Judge</a>
+                        <form className="d-flex justify-content-start" role="search">
+                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li className="nav-item dropdown">
-                                    <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        ̧                                P
+                                    <a className="nav-link dropdown-toggle username" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {userName.charAt(0).toUpperCase()}
+                                        
                                     </a>
-                                    <ul className="dropdown-menu dropdown-menu-start">
+                                    <ul className="dropdown-menu dropdown-menu-end">
+                                        {role==='admin' && (
+                                         <li><a className="dropdown-item" onClick={()=>{navigate('/dashboard')}}>Dashboard</a></li>
+
+                                        )}
                                         <li><a className="dropdown-item" onClick={handleLogout}>Logout</a></li>
                                     </ul>
                                 </li>
                             </ul>
-                        </div> */}
+                        </form>
                     </div>
                 </nav>
             </div>

@@ -10,8 +10,8 @@ import '../node_modules/font-awesome/css/font-awesome.min.css';
 import { AuthProvider } from './context/AuthProvider';
 import 'react-toastify/dist/ReactToastify.css';
 import 'tippy.js/dist/tippy.css';
-import {Provider} from 'react-redux';
-import {store} from './Redux/store.js';
+// import {Provider} from 'react-redux';
+// import {store} from './Redux/store.js';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

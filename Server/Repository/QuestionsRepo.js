@@ -215,6 +215,7 @@ class QuestionsRepository {
                 UserId: user._id,
                 Status: Status,
                 SubmittedAt: new Date(),
+                Language:language
             });
     
             await newSubmission.save();
@@ -236,6 +237,22 @@ class QuestionsRepository {
                 UserId: uid,
                 QuestionId: qid
             });
+            if (!submissionDetails) {
+                return res.status(404).send("Submission not found");
+            }
+    
+            // Convert to a plain object to avoid circular structure issues
+            // const submissionDetailsObject = submissionDetails.toObject();
+    
+            res.status(200).json(submissionDetails);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async GetAllSubmissionDetails(req, res, next) {
+        try {            
+            const submissionDetails = await Submission.find();
             if (!submissionDetails) {
                 return res.status(404).send("Submission not found");
             }

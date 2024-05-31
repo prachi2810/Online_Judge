@@ -52,6 +52,7 @@ const Login = () => {
                 }
             );
             console.log(response);
+            window.location.reload();
             toast.success("Registered successfully!");
             setError('');
         }
@@ -101,6 +102,7 @@ const Login = () => {
                 console.log(response);
                 if(response.status===201){
                     window.location.reload();
+                    toast.success("Passord Reset Sucessfully!");
                 navigate('/');
                 }
             }
@@ -225,7 +227,7 @@ const Login = () => {
                                     <label id='fieldsname' for="Password">Password</label>
                                     <br />
                                     <input id='password' className='fields' type={passwordVisible ? "text" : "password"} name="password" onChange={(e) => { setRegister({ ...register, password: e.target.value }) }} />
-                                    <button className="toggle-password" onClick={togglePasswordVisibility}>
+                                    <button type='button' className="toggle-password" onClick={togglePasswordVisibility}>
                                     {passwordVisible ? (
                                             <FontAwesomeIcon icon={faEye} />
                                         ) : (

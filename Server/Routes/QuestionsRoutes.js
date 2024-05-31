@@ -3,7 +3,7 @@ const express=require("express");
 const router=express.Router();
 
 const {AuthAccessToken}=require('../Middlerware/Auth')
-const {AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion,CompilerFile,SubmitCode,GetSubmissionDetails,GetSubmissionDetailsByQuestion}= require("../Controller/QuestionsController");
+const {AddQuestion,GetQuestion,GetAllQuestion,UpdateQuestion,DeleteQuestion,CompilerFile,SubmitCode,GetSubmissionDetails,GetSubmissionDetailsByQuestion,GetAllSubmissionDetails}= require("../Controller/QuestionsController");
 
 
 router.post('/addquestion',AuthAccessToken,AddQuestion,async(req,res,next)=>{
@@ -42,4 +42,7 @@ router.get('/getsubmissiondetils/:questionId',GetSubmissionDetailsByQuestion,asy
 
 });
 
+router.get('/getallsubmissiondetils',GetAllSubmissionDetails,async(req,res,next)=>{
+
+});
 module.exports=router;

@@ -5,6 +5,7 @@ import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
 import { axiosUserPrivate } from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const defaultQuestion = {
     "Title": "",
@@ -75,7 +76,9 @@ function AddQuestion() {
         const newTestCase = { Input, Output };
         setAddQuestion(prevState => ({
             ...prevState,
-            TestCase: [...prevState.TestCase, newTestCase]
+            TestCase: [...prevState.TestCase, newTestCase],
+            Input: '', // Reset Input
+            Output: ''
         }));
         toast.success("Test case added successfully!");
         setOpenModal(false);
@@ -180,7 +183,6 @@ function AddQuestion() {
                                             <div className="modal-footer">
                                                 <button type="button" className="btn btn-secondary" onClick={() => { setOpenModal(false) }}>Close</button>
                                                 <button type="button" className="btn btn-primary" onClick={handleAddTestcase}>Add Testcase</button>
-                                                <ToastContainer />
                                             </div>
                                         </form>
                                     </div>
@@ -244,7 +246,7 @@ function AddQuestion() {
                                 </div>
                                 <div className="mb-3">
                                         <label for="Solution" className="form-label">Solution:</label>
-                                        <input className="form-control" onChange={(e) => { setAddQuestion({ ...addQuestion, Solution: e.target.value }); }} placeholder="Solution"/>
+                                        <input className="form-control" onChange={(e) => { setAddQuestion({ ...addQuestion, Solution: e.target.value }); }} placeholder="Please add Iframe link of solution"/>
                                 </div>
                                 <div className="mb-3">
                                     {/* <button type="button" className="btn btn-primary" onClick={addTestcase}>Add Testcase</button> */}
@@ -254,7 +256,6 @@ function AddQuestion() {
                                 <div className="mb-3" style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
 
                                     <button type='submit' style={{ width: "300px" }} className='btn btn-primary d-flex justify-content-center'>Add</button>
-                                    <ToastContainer />
                                 </div>
                             </div>
 

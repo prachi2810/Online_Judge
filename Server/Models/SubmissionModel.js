@@ -21,6 +21,9 @@ const Submission=new mongoose.Schema({
         type: String,
         enum: ['Accepted', 'Failed'],
         required: true
+    },
+    Language:{
+        type:String
     }
 
 });

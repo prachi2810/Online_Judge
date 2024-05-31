@@ -11,13 +11,13 @@ import Editor, { monaco } from '@monaco-editor/react';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
-import { setTotalAcceptedSubmissions } from '../../Redux/Slice/authSlice';
+// import { setTotalAcceptedSubmissions } from '../../Redux/Slice/authSlice';
 
 
 
 import './Compiler.css';
 import SideNavBar from "./SideNavBar";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 
 function Compiler() {
     const [question, setQuestion] = useState({});
@@ -30,14 +30,15 @@ function Compiler() {
     const [theme, setTheme] = useState('light');
     const [testcases, setTestcases] = useState([]);
     const [user, setUser] = useState('');
-   const [submission, setSubmission] = useState([]);
+    const [submission, setSubmission] = useState([]);
     const levels = ['Low', 'Medium', 'High'];
+    const [Loading,setLoading]=useState(false);
 
     const editorRef = useRef(null);
 
     const { id } = useParams();
 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
@@ -60,7 +61,7 @@ class Code
     }
 }`,
         python: `# cook your dish here`,
-        javascript: `// your code goes here`
+        js: `// your code goes here`
     };
     useEffect(() => {
         setCode(defaultCodes[language]);
@@ -85,7 +86,10 @@ class Code
         if (outputTab) {
             outputTab.click();
         }
+        
         try {
+            setLoading(true);
+
             const payload = {
                 language,
                 code,
@@ -115,6 +119,9 @@ class Code
                 setOutput(`Error: ${error.message}`);
             }
             console.error(error);
+        }
+        finally{
+            setLoading(false);
         }
     };
 
@@ -156,7 +163,7 @@ class Code
     }
     useEffect(() => {
         handleisLoggedIn();
-    }, []);
+    }, [submission]);
 
 
 
@@ -299,6 +306,7 @@ class Code
                                                 </p>
                                             </div>
                                             <div className="test-output">
+                                                
                                                 <p><strong>Output:</strong> {test.Output}</p>
                                             </div>
                                         </div>
@@ -316,17 +324,29 @@ class Code
                                     </div>
                                     {/* {question.Solution} */}
                                 </div>
-                                <div className="tab-pane fade" id="submission" role="tabpanel" aria-labelledby="submission-tab">
+                                <div className="tab-pane fade" id="submission" role="tabpanel" aria-labelledby="submission-tab" style={{ maxHeight: '600px', overflowY: 'auto' }}>
                                     {
-                                        submission && submission.map((sub, index) => (
+                                        submission.length==0? <p>No submission</p>:
+                                        (submission && submission.slice().reverse().map((sub, index) => (
                                             <div className="card" style={{ display: 'inline-block', flex: 'no-wrap', width: '600px', marginTop: '20px' }} key={index}>
                                                 <div className="card-body">
-                                                    <h5 className="card-title">Status</h5>
-                                                    <p className="card-text">{sub.Status}</p>
-                                                    <h5 className="card-title">Submitted At</h5>
-                                                    <p className="card-text">{new Date(sub.SubmittedAt).toLocaleString()}</p>
+                                                    {/* <h5 style={{display:'inline-block'}} className="card-title">Status :</h5> */}
+                                                    <p style={{ display: 'inline-block' }} className={`card-text me-3 ${sub.Status === 'Accepted' ? 'status-accepted' : sub.Status === 'Failed' ? 'status-failed' : ''}`}> {sub.Status}</p>
+                                                    {/* <h5 style={{display:'inline-block'}} className="card-title"> Submitted At :</h5> */}
+                                                    <p style={{
+                                                        display: 'inline-block',
+                                                        backgroundColor: '#dfdcdc',
+                                                        paddingRight: '8px',
+                                                        paddingLeft: '8px',
+                                                        borderTopLeftRadius: '20px',
+                                                        borderBottomLeftRadius: '20px',
+                                                        borderTopRightRadius: '20px',
+                                                        borderBottomRightRadius: '20px',
+                                                    }} className="card-text me-3"> {sub.Language}</p>
+
+                                                    <p style={{ display: 'inline-block' }} className="card-text"> {new Date(sub.SubmittedAt).toLocaleString()}</p>
                                                 </div>
-                                            </div>
+                                            </div>)
                                         ))
                                     }
                                 </div>
@@ -346,7 +366,7 @@ class Code
                                                     <option value="cpp">CPP</option>
                                                     <option value="java">JAVA</option>
                                                     <option value="python">Python</option>
-                                                    <option value="javascript">JavaScript</option>
+                                                    <option value="js">JavaScript</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -410,8 +430,10 @@ class Code
                                         ></textarea>
                                     </div>
                                     <div className="tab-pane fade" id="output" role="tabpanel" aria-labelledby="output-tab">
-                                        {(
-
+                                    
+                                    {Loading ? (
+        <p>Loading....</p>
+    ) : (
                                             <textarea
                                                 className="border border-gray-300 rounded-sm py-1.5 px-4 mb-1 focus:outline-none focus:border-indigo-500 resize-none w-full"
                                                 rows='5'
@@ -428,6 +450,7 @@ class Code
                                             >
                                                 {output}
                                             </textarea>
+                                            
                                         )}
 
                                     </div>

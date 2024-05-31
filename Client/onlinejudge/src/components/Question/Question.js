@@ -11,9 +11,10 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons'
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import tippy from 'tippy.js';
 import Tippy from '@tippyjs/react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 
 const levelMap = {
@@ -65,7 +66,7 @@ function Question({ roles }) {
     const levels = ['Low', 'Medium', 'High'];
     const topics = ['Basic Beginner', 'Array', 'Strings'];
 
-    const totalAcceptedSubmissions = useSelector((state) => state.submissions.totalAcceptedSubmissions);
+    // const totalAcceptedSubmissions = useSelector((state) => state.submissions.totalAcceptedSubmissions);
 
 
     const tooltipRef = useRef();
@@ -413,7 +414,7 @@ function Question({ roles }) {
             {
                 modalOpen2 && (
                     <div>
-                        <div class="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
+                        <div class="modal fade show" style={{ display: 'block',zIndex: 1050  }} tabIndex="-1" role="dialog">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -448,7 +449,7 @@ function Question({ roles }) {
                     <>
                         {/* <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Open modal for @mdo</button> */}
 
-                        <div class="modal" style={{ display: modalOpen ? 'block' : 'none' }}>
+                        <div class="modal" style={{ display: modalOpen ? 'block' : 'none',zIndex: 1040  }}>
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -494,7 +495,7 @@ function Question({ roles }) {
 
                                                     updateQuestion.TestCase.map((testcase, index) => (
                                                         <div key={index} className='mb-3'>
-                                                            <input
+                                                            <textarea
                                                                 type='text'
                                                                 className='form-control'
                                                                 value={testcase.Input}
@@ -513,7 +514,7 @@ function Question({ roles }) {
                                                             // id='Input'
                                                             />
                                                             <br />
-                                                            <input
+                                                            <textarea
                                                                 type='text'
                                                                 className='form-control'
                                                                 value={testcase.Output}
@@ -537,7 +538,7 @@ function Question({ roles }) {
                                                 }
                                                 <Tippy content='Add Testcase'>
                                                     
-                                                <button style={{marginLeft:'90%',fontSize:'10px'}} type='button' className='btn btn-primary' onClick={() => { setModalOpen2(true); setModalOpen(true) }}><FontAwesomeIcon icon={faAdd}/></button>
+                                                <button style={{marginLeft:'90%',fontSize:'10px'}} type='button' className='btn btn-primary' onClick={() => { setModalOpen2(true); }}><FontAwesomeIcon icon={faAdd}/></button>
                                                 </Tippy>
                                             </div>
                                             <div className='mb-3'>
