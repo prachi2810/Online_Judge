@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import './Question.css';
 import axiosUserPrivate from '../../api/axios';
 import useData from '../../Hooks/useData';
-import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
+import useAxiosPrivate from '../../Hooks/UseAxiosPrivate';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
@@ -82,7 +82,7 @@ function Question({ roles }) {
     //   const solutionUrl = ;
 
     useEffect(() => {
-        console.log("Role in Question component:", roles);
+        // console.log("Role in Question component:", roles);
         // Fetch questions based on role or other conditions here
     }, [roles]);
 
@@ -110,7 +110,7 @@ function Question({ roles }) {
     const getQuestion = async () => {
         try {
             const response = await axiosPrivate.get(`/getquestion/${updateId}`);
-            console.log(response.data.question);
+            // console.log(response.data.question);
             setUpdateQuestion(response.data.question);
         }
         catch (error) {
@@ -122,8 +122,8 @@ function Question({ roles }) {
         // e.preventDefault();
         try {
             const { _id, __v, ...updatedQuestion } = updateQuestion;
-            console.log("dd");
-            console.log("up", updateQuestion);
+            // console.log("dd");
+            // console.log("up", updateQuestion);
             // Remove _id field from each object inside TestCase array
             const updatedTestCases = updatedQuestion.TestCase.map(testCase => {
                 const { _id, ...updatedTestCase } = testCase;
@@ -135,13 +135,13 @@ function Question({ roles }) {
                 ...updatedQuestion,
                 TestCase: updatedTestCases
             };
-            console.log(questionWithUpdatedTestCases);
+            // console.log(questionWithUpdatedTestCases);
             const response = await axiosPrivate.put(`/updatequestion/${updateId}`, JSON.stringify(questionWithUpdatedTestCases),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 })
-            console.log(response);
+            // console.log(response);
             if (response.status == 201) {
                 toast.success("Question Updated successfully!");
                 setModalOpen(false);
@@ -206,7 +206,7 @@ function Question({ roles }) {
     }, [search]);
 
     useEffect(() => {
-        console.log(filterTopic);
+        // console.log(filterTopic);
         if (filterTopic == 0) {
             getAllQuestion();
         } else {
@@ -307,7 +307,7 @@ function Question({ roles }) {
         e.preventDefault();
         const validationErrors = {};
         let hasErrors = false;
-        console.log("modal", updateQuestion.TestCase);
+        // console.log("modal", updateQuestion.TestCase);
         if (updateQuestion.TestCase.some(testCase => testCase.Input.trim() == '' || testCase.Output.trim() == '')) {
             validationErrors.TestCase = 'All test cases must have both Input and Output values';
             hasErrors = true;
@@ -332,7 +332,7 @@ function Question({ roles }) {
         try {
             // Fetch all submissions for the specific question
             const response = await axiosPrivate.get(`/getsubmissiondetils/${questionId}`);
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.status === 404 || !response.data.length) {
                 setSubmissionCount(prevState => ({

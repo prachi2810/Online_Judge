@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useRefreshToken from "./useRefreshToken";
+import useRefreshToken from "../Hooks/UseRefreshToken";
 import useData from "./useData";
 
 const useAxiosPrivate = (axios) => {

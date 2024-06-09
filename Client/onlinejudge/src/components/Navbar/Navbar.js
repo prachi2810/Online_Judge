@@ -15,7 +15,7 @@ function Navbar({ setRole,role }) {
             if (response.status === 200) {
                 navigate('/');
             }
-            console.log(response);
+            // console.log(response);
         } catch (error) {
             console.log(error);
         }
@@ -24,10 +24,10 @@ function Navbar({ setRole,role }) {
     const handleisLoggedIn = async () => {
         try {
             const response = await axios.get('/isLoggedIn', { withCredentials: true });
-            console.log('ddd');
+            // console.log('ddd');
             setRole(response.data.role);
             setUserName(response.data.email); // Set userName state
-            console.log("uuuu", userName);
+            // console.log("uuuu", userName);
             if (response.status === 401) {
                 navigate('/unauthorized');
             }

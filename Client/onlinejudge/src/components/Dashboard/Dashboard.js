@@ -5,7 +5,7 @@ import LineChart from "./LineChart";
 import PieChart from "./PieChart";
 import "./Dashboard.css";
 import axiosUserPrivate from '../../api/axios';
-import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
+import useAxiosPrivate from '../../Hooks/UseAxiosPrivate';
 
 const Dashboard = () => {
   const [submissionData, setSubmissionData] = useState([]);

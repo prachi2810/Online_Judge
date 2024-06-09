@@ -1,7 +1,7 @@
 import axios from "../../api/axios";
 import { useState } from "react"
 
-import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
+import useAxiosPrivate from '../../Hooks/UseAxiosPrivate';
 import { axiosUserPrivate } from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
@@ -43,7 +43,7 @@ function AddQuestion() {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 });
-            console.log(response);
+            // console.log(response);
             if (response.status == 201) {
                 toast.success("Question Added successfully!");
                 navigate('/allquestions');
@@ -53,7 +53,7 @@ function AddQuestion() {
 
         }
     }
-    console.log(openModal);
+    // console.log(openModal);
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setAddQuestion(prevState => ({
@@ -66,7 +66,7 @@ function AddQuestion() {
         e.preventDefault();
         const validationErrors = {};
         let hasErrors = false;
-        console.log("modal",addQuestion.TestCase);
+        // console.log("modal",addQuestion.TestCase);
         if (addQuestion.TestCase.some(testCase => testCase.Input.trim() == '' || testCase.Output.trim() == '')) {
             validationErrors.TestCase = 'All test cases must have both Input and Output values';
             hasErrors = true;
@@ -155,7 +155,7 @@ function AddQuestion() {
         // Proceed with form submission
         // Your logic here
     };
-    console.log("test",errors.TestCase);
+    // console.log("test",errors.TestCase);
 
 
     return (

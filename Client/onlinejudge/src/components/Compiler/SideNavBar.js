@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './sidenavbar.css';
-import UseAxiosPrivate from "../../Hooks/useAxiosPrivate";
+import UseAxiosPrivate from "../../Hooks/UseAxiosPrivate";
 import axiosUserPrivate from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +21,7 @@ function SideNavBar() {
         try {
             // setLoad(true);
             const response = await axiosPrivate.get('/getallquestion');
-            console.log("All questios", response.data.questions);
+            // console.log("All questios", response.data.questions);
             setQuestions(response.data.questions);
 
         }

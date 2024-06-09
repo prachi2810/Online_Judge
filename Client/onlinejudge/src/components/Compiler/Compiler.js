@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import UseAxiosPrivate from "../../Hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../Hooks/UseAxiosPrivate";
 import axiosUserPrivate from '../../api/axios';
 // import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
@@ -24,7 +24,7 @@ function Compiler() {
     const [code, setCode] = useState('');
     const [input, setInput] = useState('');
     const [output, setOutput] = useState('');
-    const axiosPrivate = UseAxiosPrivate(axiosUserPrivate);
+    const axiosPrivate = useAxiosPrivate(axiosUserPrivate);
     const [language, setLanguage] = useState('cpp');
     const [load, setLoad] = useState(false);
     const [theme, setTheme] = useState('light');
@@ -43,25 +43,13 @@ function Compiler() {
     const navigate = useNavigate();
 
     const defaultCodes = {
-        cpp: `#include <iostream> 
+cpp: `#include <iostream> 
 using namespace std;
 int main() { 
     return 0;  
 }`,
-        java: `import java.util.*;
-import java.lang.*;
-import java.io.*;
-
-class Code
-{
-    public static void main (String[] args) throws java.lang.Exception
-    {
-        // your code goes here
-
-    }
-}`,
-        python: `# cook your dish here`,
-        js: `// your code goes here`
+python: `# cook your dish here`,
+js: `// your code goes here`
     };
     useEffect(() => {
         setCode(defaultCodes[language]);
@@ -71,7 +59,7 @@ class Code
         try {
             setLoad(true);
             const response = await axiosPrivate.get(`/getquestion/${id}`);
-            console.log(response);
+            // console.log(response);
             setQuestion(response.data.question);
         } catch (error) {
             console.error(error);
@@ -99,7 +87,7 @@ class Code
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });
-            console.log(response);
+            // console.log(response);
             setOutput(response.data.output);
 
             if (response.data.error) {
@@ -137,7 +125,7 @@ class Code
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });
-            console.log(response);
+            // console.log(response);
             setTestcases(response.data.results);
         }
         catch (error) {
@@ -169,7 +157,7 @@ class Code
 
     useEffect(() => {
         getQuestion();
-        console.log(theme);
+        // console.log(theme);
     }, [id]);
 
     // const handleEditorDidMount = (editor, monaco) => {

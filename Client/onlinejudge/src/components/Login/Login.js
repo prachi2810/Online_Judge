@@ -51,7 +51,7 @@ const Login = () => {
                     withCredentials: true
                 }
             );
-            console.log(response);
+            // console.log(response);
             window.location.reload();
             toast.success("Registered successfully!");
             setError('');
@@ -73,13 +73,13 @@ const Login = () => {
                     withCredentials: true
                 }
             );
-            console.log(response);
+            // console.log(response);
             const token = response?.data?.token;
-            console.log("loginacc", token);
+            // console.log("loginacc", token);
             setToken({ token });
             navigate('/allquestions');
             setError('');
-            console.log("err",response);
+            // console.log("err",response);
             toast.success("Login successfully!");
 
         }
@@ -99,7 +99,7 @@ const Login = () => {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
                 });
-                console.log(response);
+                // console.log(response);
                 if(response.status===201){
                     window.location.reload();
                     toast.success("Passord Reset Sucessfully!");
